@@ -31,10 +31,12 @@ def main():
 
     channel_names = {1:"boost", 2:"clean", 3:"xlead"}
     for pc_number in [1,2,3]:
-        send_program_change(output_port, channel, pc_number)
-        print(f"{pc_number} - {channel_names[pc_number]}")
-        time.sleep(2)
-
+        try:
+            send_program_change(output_port, channel, pc_number)
+            print(f"{pc_number} - {channel_names[pc_number]}")
+            time.sleep(2)
+        except Exception as e:
+            print(f"Unexpected error: {e}")
 
 if __name__ == "__main__":
     main()
