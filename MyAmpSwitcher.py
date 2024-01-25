@@ -1,9 +1,11 @@
 import json
 import mido
+import logging
 import os
 from PyQt5.QtWidgets import QApplication, QPushButton, QVBoxLayout, QWidget, QComboBox, QLabel, \
     QHBoxLayout, QFileDialog, QMessageBox, QGridLayout
 from PyQt5.QtGui import QIcon, QFont
+
 
 # Global variables
 script_directory = os.path.dirname(os.path.realpath(__file__))
@@ -11,7 +13,12 @@ settings = None
 profile_data = None
 output_port = None
 window = None
-midi_channel_combobox = None  # Declare the combobox globally
+midi_channel_combobox = None  
+
+# Configure logging
+log_file_path = os.path.join(script_directory, "MyAmpSwitcher.log")
+logging.basicConfig(filename=log_file_path, level=logging.DEBUG,
+                    format='%(asctime)s - %(levelname)s - %(message)s')
 
 def load_settings():
     with open(os.path.join(script_directory, "settings.json")) as settings_file:
@@ -36,7 +43,7 @@ def create_window(profile_data):
     midi_output_combobox.currentIndexChanged.connect(select_midi_output)
 
     # MIDI Channel ComboBox
-    global midi_channel_combobox  # Make the combobox global
+    global midi_channel_combobox  
     midi_channel_label = QLabel("Channel:")
     midi_channel_combobox = QComboBox()
     midi_channel_combobox.addItems(map(str, range(128)))  # Adding values 0 to 127
@@ -104,7 +111,7 @@ for port in mido.get_output_names():
         output_port = mido.open_output(port)
         break
 if not output_port:
-    print(f"Error: MIDI port '{port_name}' not found.")
+    logging.error(f"Error: MIDI port '{port_name}' not found.")
 
 
 def send_program_change(pc_number):
@@ -115,7 +122,7 @@ def send_program_change(pc_number):
     try:
         output_port.send(program_change)
     except Exception as e:
-        print(f"Unexpected error: {e}")
+        logging.error(f"Unexpected error: {e}")
 
 
 def select_midi_output(index):
@@ -123,7 +130,7 @@ def select_midi_output(index):
     settings["port_name"] = selected_port
     global output_port
     if output_port is not None:
-        output_port.close()  # Close the previous output port
+        output_port.close()  
     output_port = mido.open_output(selected_port)
 
 
@@ -135,15 +142,14 @@ def select_midi_channel(index):
 def save_settings():
     with open(os.path.join(script_directory, "settings.json"), 'w') as settings_file:
         json.dump(settings, settings_file, indent=4)
+    logging.info("Saved settings.json")
     
-    # Save the channel information to the profile as well
-    new_profile_data = profile_data.copy()  # Make a copy to avoid modifying the original
+    new_profile_data = profile_data.copy()  
     new_profile_data["channel"] = int(midi_channel_combobox.currentText())
     
     with open(os.path.join(script_directory, "profiles", settings["profile"]), 'w') as profile_file:
         json.dump(new_profile_data, profile_file, indent=4)
-
-
+    logging.info(f"Saved {settings['profile']}")
 
 def change_profile():
     global window, profile_data
