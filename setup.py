@@ -8,7 +8,7 @@ DATA_FILES = [
 OPTIONS = {
     'argv_emulation': True,
     'packages': ['mido', 'PyQt5'],
-    'includes': ['json', 'os', 'PyQt5.QtWidgets', 'PyQt5.QtGui'],
+    'includes': ['json', 'PyQt5.QtWidgets', 'PyQt5.QtGui'],
     'iconfile': 'icon.icns',
 }
 
@@ -17,5 +17,5 @@ setup(
     data_files=DATA_FILES,
     options={'py2app': OPTIONS},
     setup_requires=['py2app'],
-    install_requires=['python-rtmidi','mido', 'PyQt5'],  # Use install_requires for dependencies
+    install_requires=['python-rtmidi', 'mido', 'PyQt5'],  # Use install_requires for dependencies
 )

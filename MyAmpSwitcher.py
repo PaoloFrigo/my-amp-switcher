@@ -2,7 +2,7 @@ import json
 import mido
 import os
 from PyQt5.QtWidgets import QApplication, QPushButton, QVBoxLayout, QWidget, QComboBox, QLabel, \
-    QHBoxLayout, QFileDialog, QMessageBox
+    QHBoxLayout, QFileDialog, QMessageBox, QGridLayout
 from PyQt5.QtGui import QIcon, QFont
 
 # Global variables
@@ -64,17 +64,20 @@ def create_window(profile_data):
 
     sorted_buttons = sorted(profile_data.get('buttons', []), key=lambda x: x.get('order', 0))
 
-    # Create a horizontal layout for channel buttons
-    channel_buttons_layout = QHBoxLayout()
+    # Create a grid layout for channel buttons
+    channel_buttons_layout = QGridLayout()
 
-    for button_info in sorted_buttons:
+    for idx, button_info in enumerate(sorted_buttons):
         pc_number = button_info.get('program_change', 0)
         name = button_info.get('name', 'Unknown')
         button = QPushButton(name)
         button.setMinimumHeight(40)
-        button.setFont(QFont(settings["font"],settings["size"]))
+        button.setFont(QFont("Arial", 12))
         button.clicked.connect(lambda _, ch=pc_number: send_program_change(ch))
-        channel_buttons_layout.addWidget(button)
+
+        # Calculate row and column indices
+        row, col = divmod(idx, 4)
+        channel_buttons_layout.addWidget(button, row, col)
 
     layout.addLayout(channel_buttons_layout)
 

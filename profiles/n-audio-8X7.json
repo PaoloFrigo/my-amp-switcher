@@ -1,0 +1,102 @@
+{
+    "name": "N-AUDIO 8X7",
+    "channel": 0,
+    "buttons": [
+        {
+            "order": 0,
+            "color": "green",
+            "program_change": 2,
+            "name": "amp1"
+        },
+        {
+            "order": 0,
+            "color": "green",
+            "program_change": 2,
+            "name": "amp2"
+        },
+        {
+            "order": 0,
+            "color": "green",
+            "program_change": 2,
+            "name": "amp3"
+        },
+        {
+            "order": 0,
+            "color": "green",
+            "program_change": 2,
+            "name": "amp4"
+        },
+        {
+            "order": 0,
+            "color": "green",
+            "program_change": 2,
+            "name": "amp5"
+        },
+        {
+            "order": 0,
+            "color": "green",
+            "program_change": 2,
+            "name": "amp6"
+        },
+        {
+            "order": 0,
+            "color": "green",
+            "program_change": 2,
+            "name": "amp7"
+        },
+        {
+            "order": 0,
+            "color": "green",
+            "program_change": 2,
+            "name": "amp8"
+        },
+        {
+            "order": 0,
+            "color": "green",
+            "program_change": 2,
+            "name": "att"
+        },
+        {
+            "order": 0,
+            "color": "green",
+            "program_change": 2,
+            "name": "cab1"
+        },
+        {
+            "order": 0,
+            "color": "green",
+            "program_change": 2,
+            "name": "cab2"
+        },
+        {
+            "order": 0,
+            "color": "green",
+            "program_change": 2,
+            "name": "cab3"
+        },
+        {
+            "order": 0,
+            "color": "green",
+            "program_change": 2,
+            "name": "cab4"
+        },
+        {
+            "order": 0,
+            "color": "green",
+            "program_change": 2,
+            "name": "cab5"
+        },
+        {
+            "order": 0,
+            "color": "green",
+            "program_change": 2,
+            "name": "cab6"
+        },
+        {
+            "order": 0,
+            "color": "green",
+            "program_change": 2,
+            "name": "cab7"
+        }
+    ]
+}
