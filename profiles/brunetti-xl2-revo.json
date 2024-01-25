@@ -1,0 +1,24 @@
+{
+    "name": "BRUNETTI XL2 R-EVO",
+    "channel": 0,
+    "buttons": [
+        {
+            "order": 0,
+            "color": "green",
+            "program_change": 2,
+            "name": "clean"
+        },
+        {
+            "order": 1,
+            "color": "yellow",
+            "program_change": 1,
+            "name": "boost"
+        },
+        {
+            "order": 2,
+            "color": "red",
+            "program_change": 3,
+            "name": "xlead"
+        }
+    ]
+}

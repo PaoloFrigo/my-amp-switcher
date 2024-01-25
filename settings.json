@@ -1,6 +1,5 @@
 {
-    "channel": 0,
     "port_name": "USB MIDI CABLE",
-    "profile": "brunettixlrevo.json",
+    "profile": "proto.json",
     "icon": "icon.icns"
 }
