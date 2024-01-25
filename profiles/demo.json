@@ -1,0 +1,18 @@
+{
+    "name": "demo",
+    "channel": 0,
+    "buttons": [
+        {
+            "order": 0,
+            "color": "green",
+            "program_change": 1,
+            "name": "clean"
+        },
+        {
+            "order": 1,
+            "color": "green",
+            "program_change": 2,
+            "name": "crunch"
+        }
+    ]
+}

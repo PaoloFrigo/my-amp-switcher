@@ -6,49 +6,49 @@
             "order": 0,
             "color": "green",
             "program_change": 2,
-            "name": "amp1"
+            "name": "amp 1"
         },
         {
             "order": 0,
             "color": "green",
             "program_change": 2,
-            "name": "amp2"
+            "name": "amp 2"
         },
         {
             "order": 0,
             "color": "green",
             "program_change": 2,
-            "name": "amp3"
+            "name": "amp 3"
         },
         {
             "order": 0,
             "color": "green",
             "program_change": 2,
-            "name": "amp4"
+            "name": "amp 4"
         },
         {
             "order": 0,
             "color": "green",
             "program_change": 2,
-            "name": "amp5"
+            "name": "amp 5"
         },
         {
             "order": 0,
             "color": "green",
             "program_change": 2,
-            "name": "amp6"
+            "name": "amp 6"
         },
         {
             "order": 0,
             "color": "green",
             "program_change": 2,
-            "name": "amp7"
+            "name": "amp 7"
         },
         {
             "order": 0,
             "color": "green",
             "program_change": 2,
-            "name": "amp8"
+            "name": "amp 8"
         },
         {
             "order": 0,
@@ -60,43 +60,43 @@
             "order": 0,
             "color": "green",
             "program_change": 2,
-            "name": "cab1"
+            "name": "cab 1"
         },
         {
             "order": 0,
             "color": "green",
             "program_change": 2,
-            "name": "cab2"
+            "name": "cab 2"
         },
         {
             "order": 0,
             "color": "green",
             "program_change": 2,
-            "name": "cab3"
+            "name": "cab 3"
         },
         {
             "order": 0,
             "color": "green",
             "program_change": 2,
-            "name": "cab4"
+            "name": "cab 4"
         },
         {
             "order": 0,
             "color": "green",
             "program_change": 2,
-            "name": "cab5"
+            "name": "cab 5"
         },
         {
             "order": 0,
             "color": "green",
             "program_change": 2,
-            "name": "cab6"
+            "name": "cab 6"
         },
         {
             "order": 0,
             "color": "green",
             "program_change": 2,
-            "name": "cab7"
+            "name": "cab 7"
         }
     ]
 }
