@@ -15,7 +15,7 @@ OPTIONS = {
     "iconfile": "icon.icns",
 }
 # Version and GitHub link
-VERSION = "1.0.0"  
+VERSION = "1.0.0"
 GITHUB_URL = "https://github.com/your-username/your-project"
 
 
@@ -28,7 +28,7 @@ setup(
         "python-rtmidi",
         "mido",
         "PyQt5",
-    ], 
+    ],
     version=VERSION,
     url=GITHUB_URL,
 )

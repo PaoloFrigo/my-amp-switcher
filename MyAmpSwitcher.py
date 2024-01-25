@@ -2,9 +2,24 @@ import json
 import mido
 import logging
 import os
-from PyQt5.QtWidgets import QApplication, QPushButton, QVBoxLayout, QWidget, QComboBox, QLabel, \
-    QHBoxLayout, QFileDialog, QMessageBox, QGridLayout, QMainWindow, QAction, QMenuBar, QMenu, \
-    QDialog, QTextEdit
+from PyQt5.QtWidgets import (
+    QApplication,
+    QPushButton,
+    QVBoxLayout,
+    QWidget,
+    QComboBox,
+    QLabel,
+    QHBoxLayout,
+    QFileDialog,
+    QMessageBox,
+    QGridLayout,
+    QMainWindow,
+    QAction,
+    QMenuBar,
+    QMenu,
+    QDialog,
+    QTextEdit,
+)
 from PyQt5.QtGui import QIcon, QFont
 
 # Global variables
@@ -17,8 +32,11 @@ midi_channel_combobox = None
 
 # Configure logging
 log_file_path = os.path.join(script_directory, "MyAmpSwitcher.log")
-logging.basicConfig(filename=log_file_path, level=logging.DEBUG,
-                    format='%(asctime)s - %(levelname)s - %(message)s')
+logging.basicConfig(
+    filename=log_file_path,
+    level=logging.DEBUG,
+    format="%(asctime)s - %(levelname)s - %(message)s",
+)
 
 
 class MainWindow(QMainWindow):
@@ -31,18 +49,18 @@ class MainWindow(QMainWindow):
         menubar = self.menuBar()
 
         # Create Profile menu
-        profile_menu = menubar.addMenu('Profile')
+        profile_menu = menubar.addMenu("Profile")
 
         # Add actions to Profile menu
-        new_action = QAction('New', self)
+        new_action = QAction("New", self)
         new_action.triggered.connect(self.new_profile)
         profile_menu.addAction(new_action)
 
-        edit_action = QAction('Edit', self)
+        edit_action = QAction("Edit", self)
         edit_action.triggered.connect(self.edit_profile)
         profile_menu.addAction(edit_action)
 
-        load_action = QAction('Load', self)
+        load_action = QAction("Load", self)
         load_action.triggered.connect(self.load_profile)
         profile_menu.addAction(load_action)
 
@@ -58,7 +76,9 @@ class MainWindow(QMainWindow):
         midi_channel_label = QLabel("Channel:")
         midi_channel_combobox = QComboBox()
         midi_channel_combobox.addItems(map(str, range(128)))  # Adding values 0 to 127
-        midi_channel_combobox.setCurrentText(str(profile_data.get("channel", settings["channel"])))
+        midi_channel_combobox.setCurrentText(
+            str(profile_data.get("channel", settings["channel"]))
+        )
         midi_channel_combobox.currentIndexChanged.connect(select_midi_channel)
 
         # Save Button
@@ -77,14 +97,16 @@ class MainWindow(QMainWindow):
         central_layout = QVBoxLayout(central_widget)
         central_layout.addLayout(midi_layout)
 
-        sorted_buttons = sorted(profile_data.get('buttons', []), key=lambda x: x.get('order', 0))
+        sorted_buttons = sorted(
+            profile_data.get("buttons", []), key=lambda x: x.get("order", 0)
+        )
 
         # Create a grid layout for channel buttons
         channel_buttons_layout = QGridLayout()
 
         for idx, button_info in enumerate(sorted_buttons):
-            pc_number = button_info.get('program_change', 0)
-            name = button_info.get('name', 'Unknown')
+            pc_number = button_info.get("program_change", 0)
+            name = button_info.get("name", "Unknown")
             button = QPushButton(name)
             button.setMinimumHeight(40)
             button.setFont(QFont("Arial", 12))
@@ -98,7 +120,7 @@ class MainWindow(QMainWindow):
 
         self.setCentralWidget(central_widget)
 
-        title_width = len(profile_data['name']) * 10 + 50
+        title_width = len(profile_data["name"]) * 10 + 50
         self.resize(title_width, 100)
 
         # Set the application icon
@@ -110,13 +132,8 @@ class MainWindow(QMainWindow):
             "name": "Template",
             "channel": 0,
             "buttons": [
-                {
-                    "order": 0,
-                    "color": "green",
-                    "program_change": 1,
-                    "name": "clean"
-                }
-            ]
+                {"order": 0, "color": "green", "program_change": 1, "name": "clean"}
+            ],
         }
 
         options = QFileDialog.Options()
@@ -125,14 +142,16 @@ class MainWindow(QMainWindow):
         file_dialog.setFileMode(QFileDialog.AnyFile)
         file_dialog.setAcceptMode(QFileDialog.AcceptSave)
         file_dialog.setNameFilter("JSON files (*.json)")
-        file_dialog.setDirectory(os.path.join(script_directory, 'profiles'))
+        file_dialog.setDirectory(os.path.join(script_directory, "profiles"))
         file_dialog.setWindowTitle("Save New Profile JSON File")
         if file_dialog.exec_():
             selected_file = file_dialog.selectedFiles()[0]
             new_profile_name = os.path.basename(selected_file)
 
             # Save the new profile file
-            with open(os.path.join(script_directory, "profiles", new_profile_name), 'w') as profile_file:
+            with open(
+                os.path.join(script_directory, "profiles", new_profile_name), "w"
+            ) as profile_file:
                 json.dump(template_json, profile_file, indent=4)
             logging.info(f"Saved new profile: {new_profile_name}")
 
@@ -147,7 +166,9 @@ class MainWindow(QMainWindow):
             save_settings()  # Save the changes to settings.json
 
             # Reload the main window with the new profile data
-            self.setWindowTitle(new_profile_name)  # Update window title with the new profile name
+            self.setWindowTitle(
+                new_profile_name
+            )  # Update window title with the new profile name
             self.close()
             self.__init__(profile_data)
             self.show()
@@ -166,7 +187,7 @@ class EditProfileWindow(QDialog):
 
         self.profile_data = profile_data
 
-        self.setWindowTitle('Edit Profile')
+        self.setWindowTitle("Edit Profile")
         self.setGeometry(100, 100, 600, 400)
 
         # Create a text area to display JSON content
@@ -190,7 +211,9 @@ class EditProfileWindow(QDialog):
             profile_data.update(new_profile_data)
 
             # Save the changes to the profile file
-            with open(os.path.join(script_directory, "profiles", settings["profile"]), 'w') as profile_file:
+            with open(
+                os.path.join(script_directory, "profiles", settings["profile"]), "w"
+            ) as profile_file:
                 json.dump(profile_data, profile_file, indent=4)
             logging.info(f"Saved {settings['profile']}")
 
@@ -213,17 +236,22 @@ def load_settings():
 
 
 def load_profile_data(profile_name):
-    json_file_path = os.path.join(script_directory, 'profiles', profile_name)
+    json_file_path = os.path.join(script_directory, "profiles", profile_name)
     with open(json_file_path) as json_file:
         return json.load(json_file)
 
 
-
 def send_program_change(pc_number):
     if output_port is None:
-        QMessageBox.warning(None, "MIDI output port not found", "Please connect a valid MIDI output port and try again")
+        QMessageBox.warning(
+            None,
+            "MIDI output port not found",
+            "Please connect a valid MIDI output port and try again",
+        )
         return
-    program_change = mido.Message('program_change', channel=settings["channel"], program=pc_number)
+    program_change = mido.Message(
+        "program_change", channel=settings["channel"], program=pc_number
+    )
     try:
         output_port.send(program_change)
     except Exception as e:
@@ -245,14 +273,16 @@ def select_midi_channel(index):
 
 
 def save_settings():
-    with open(os.path.join(script_directory, "settings.json"), 'w') as settings_file:
+    with open(os.path.join(script_directory, "settings.json"), "w") as settings_file:
         json.dump(settings, settings_file, indent=4)
     logging.info("Saved settings.json")
 
     new_profile_data = profile_data.copy()
     new_profile_data["channel"] = int(midi_channel_combobox.currentText())
 
-    with open(os.path.join(script_directory, "profiles", settings["profile"]), 'w') as profile_file:
+    with open(
+        os.path.join(script_directory, "profiles", settings["profile"]), "w"
+    ) as profile_file:
         json.dump(new_profile_data, profile_file, indent=4)
     logging.info(f"Saved {settings['profile']}")
 
@@ -264,7 +294,7 @@ def change_profile():
     file_dialog = QFileDialog()
     file_dialog.setFileMode(QFileDialog.ExistingFile)
     file_dialog.setNameFilter("JSON files (*.json)")
-    file_dialog.setDirectory(os.path.join(script_directory, 'profiles'))
+    file_dialog.setDirectory(os.path.join(script_directory, "profiles"))
     file_dialog.setWindowTitle("Select Profile JSON File")
     if file_dialog.exec_():
         selected_file = file_dialog.selectedFiles()[0]
@@ -286,7 +316,7 @@ def change_profile():
         window.show()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     app = QApplication([])
 
     # SETTINGS
