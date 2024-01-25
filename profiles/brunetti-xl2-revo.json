@@ -1,7 +1,7 @@
 {
     "name": "Brunetti XL\" R-EVO",
     "channel": 0,
-    "buttons":  [
+    "buttons": [
         {
             "order": 0,
             "color": "green",
