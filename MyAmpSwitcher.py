@@ -2,7 +2,7 @@ import json
 import mido
 import os
 from PyQt5.QtWidgets import QApplication, QPushButton, QVBoxLayout, QWidget, QComboBox, QLabel, \
-    QHBoxLayout, QFileDialog
+    QHBoxLayout, QFileDialog, QMessageBox
 from PyQt5.QtGui import QIcon, QFont
 
 # Global variables
@@ -88,9 +88,6 @@ def create_window(profile_data):
 
     return window
 
-   
-
-
 
 # SETTINGS
 settings = load_settings()
@@ -108,6 +105,9 @@ if not output_port:
 
 
 def send_program_change(pc_number):
+    if output_port is None  :
+        QMessageBox.warning(None,"MIDI output port not found", "Please connect a valid MIDI output port and try again")
+        return
     program_change = mido.Message('program_change', channel=settings["channel"], program=pc_number)
     try:
         output_port.send(program_change)
@@ -119,7 +119,8 @@ def select_midi_output(index):
     selected_port = midi_output_combobox.itemText(index)
     settings["port_name"] = selected_port
     global output_port
-    output_port.close()  # Close the previous output port
+    if output_port is not None:
+        output_port.close()  # Close the previous output port
     output_port = mido.open_output(selected_port)
 
 
