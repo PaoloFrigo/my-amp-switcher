@@ -20,6 +20,7 @@ from PyQt5.QtWidgets import (
     QDialog,
     QTextEdit,
 )
+from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QIcon, QFont
 
 # Global variables
@@ -29,6 +30,7 @@ profile_data = None
 output_port = None
 window = None
 midi_channel_combobox = None
+__version__ = "1.0.0" 
 
 # Configure logging
 log_file_path = os.path.join(script_directory, "MyAmpSwitcher.log")
@@ -44,9 +46,10 @@ class MainWindow(QMainWindow):
         super(MainWindow, self).__init__()
 
         self.profile_data = profile_data
-
+        
         # Create menu bar
         menubar = self.menuBar()
+        menubar.setNativeMenuBar(False)
 
         # Create Profile menu
         profile_menu = menubar.addMenu("Profile")
@@ -62,7 +65,12 @@ class MainWindow(QMainWindow):
 
         load_action = QAction("Load", self)
         load_action.triggered.connect(self.load_profile)
-        profile_menu.addAction(load_action)
+        profile_menu.addAction(load_action) 
+
+        help_menu = menubar.addMenu("About")
+        about_action = QAction("Version", self)
+        about_action.triggered.connect(self.show_about_dialog)
+        help_menu.addAction(about_action)
 
         # MIDI Output ComboBox
         midi_output_label = QLabel("MIDI Output:")
@@ -179,6 +187,37 @@ class MainWindow(QMainWindow):
 
     def load_profile(self):
         change_profile()
+
+    def show_about_dialog(self):
+        disclaimer = """<h2>DISCLAIMER</h2>
+                        THE SOFTWARE IS PROVIDED AS IS, WITHOUT WARRANTY OF ANY KIND, 
+                        EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+                        MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. 
+                        IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, 
+                        DAMAGES OR OTHER LIABILITY,
+                        WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
+                        CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+                        <h2>SHOW YOUR SUPPORT</h2>
+                        Don't forget to give a ⭐️ on github you found this app useful!"""
+        about_text = f"MyAmpSwitcher v{__version__} was created by Paolo Frigo and released as an open source project via the MIT License. <br><br>Visit the <a href='https://github.com/paolofrigo/my-amp-switcher'>official page on GitHub</a> for more information and check for new releases. {disclaimer}"
+
+        about_dialog = QDialog(self)
+        about_dialog.setWindowTitle("About MyAmpSwitcher")
+        about_dialog.setGeometry(200, 200, 400, 500)
+
+        about_label = QLabel()
+        about_label.setTextFormat(Qt.RichText)
+        about_label.setOpenExternalLinks(True)
+        about_label.setText(about_text)
+        about_label.setWordWrap(True)  
+
+        layout = QVBoxLayout()
+        layout.addWidget(about_label)
+        about_dialog.setLayout(layout)
+
+        about_dialog.exec_()
+
 
 
 class EditProfileWindow(QDialog):
