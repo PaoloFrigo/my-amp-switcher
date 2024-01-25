@@ -30,7 +30,7 @@ profile_data = None
 output_port = None
 window = None
 midi_channel_combobox = None
-__version__ = "1.0.0" 
+__version__ = "1.0.0"
 
 # Configure logging
 log_file_path = os.path.join(script_directory, "MyAmpSwitcher.log")
@@ -46,7 +46,7 @@ class MainWindow(QMainWindow):
         super(MainWindow, self).__init__()
 
         self.profile_data = profile_data
-        
+
         # Create menu bar
         menubar = self.menuBar()
         menubar.setNativeMenuBar(False)
@@ -65,7 +65,7 @@ class MainWindow(QMainWindow):
 
         load_action = QAction("Load", self)
         load_action.triggered.connect(self.load_profile)
-        profile_menu.addAction(load_action) 
+        profile_menu.addAction(load_action)
 
         help_menu = menubar.addMenu("About")
         about_action = QAction("Version", self)
@@ -200,6 +200,7 @@ class MainWindow(QMainWindow):
 
                         <h2>SHOW YOUR SUPPORT</h2>
                         Don't forget to give a ⭐️ on github you found this app useful!"""
+
         about_text = f"MyAmpSwitcher v{__version__} was created by Paolo Frigo and released as an open source project via the MIT License. <br><br>Visit the <a href='https://github.com/paolofrigo/my-amp-switcher'>official page on GitHub</a> for more information and check for new releases. {disclaimer}"
 
         about_dialog = QDialog(self)
@@ -210,14 +211,13 @@ class MainWindow(QMainWindow):
         about_label.setTextFormat(Qt.RichText)
         about_label.setOpenExternalLinks(True)
         about_label.setText(about_text)
-        about_label.setWordWrap(True)  
+        about_label.setWordWrap(True)
 
         layout = QVBoxLayout()
         layout.addWidget(about_label)
         about_dialog.setLayout(layout)
 
         about_dialog.exec_()
-
 
 
 class EditProfileWindow(QDialog):
