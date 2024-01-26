@@ -31,7 +31,7 @@ jobs:
     - name: Zip .app file
       run: |
         cd dist
-        zip -r dist/MyAmpSwitcher.zip dist/MyAmpSwitcher.app
+        zip -r MyAmpSwitcher.zip MyAmpSwitcher.app
 
     - name: Upload artifact
       uses: actions/upload-artifact@v2
