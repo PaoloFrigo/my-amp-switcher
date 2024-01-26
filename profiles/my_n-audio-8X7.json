@@ -127,6 +127,36 @@
             "cc_number": 119,
             "cc_value": 1,
             "name": "cab 7 "
+        },
+        {
+            "order": 17,
+            "color": "red",
+            "program_change": 30,
+            "name": "Clean"
+        },
+        {
+            "order": 18,
+            "color": "red",
+            "program_change": 31,
+            "name": "Edge"
+        },
+        {
+            "order": 19,
+            "color": "red",
+            "program_change": 32,
+            "name": "Crunch"
+        },
+        {
+            "order": 20,
+            "color": "red",
+            "program_change": 33,
+            "name": "Heavy"
+        },
+        {
+            "order": 21,
+            "color": "red",
+            "program_change": 34,
+            "name": "Lead"
         }
     ]
 }

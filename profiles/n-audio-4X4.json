@@ -1,7 +1,8 @@
 {
-    "name": "N-AUDIO 8X7",
+    "name": "N-AUDIO 4X4",
     "channel": 0,
     "buttons": [
+
         {
             "order": 0,
             "color": "green",
@@ -26,44 +27,16 @@
         {
             "order": 3,
             "color": "red",
-            "cc_number": 105,
+            "cc_number": 107,
             "cc_value": 1,
             "name": "amp 3"
         },
         {
             "order": 4,
             "color": "red",
-            "cc_number": 106,
-            "cc_value": 1,
-            "name": "amp 4"
-        },
-        {
-            "order": 5,
-            "color": "red",
-            "cc_number": 107,
-            "cc_value": 1,
-            "name": "amp 5"
-        },
-        {
-            "order": 6,
-            "color": "red",
             "cc_number": 108,
             "cc_value": 1,
-            "name": "amp 6"
-        },
-        {
-            "order": 7,
-            "color": "red",
-            "cc_number": 109,
-            "cc_value": 1,
-            "name": "amp 7"
-        },
-        {
-            "order": 8,
-            "color": "red",
-            "cc_number": 110,
-            "cc_value": 1,
-            "name": "amp 8"
+            "name": "amp 4"
         },
         {
             "order": 9,
@@ -82,51 +55,30 @@
         {
             "order": 11,
             "color": "red",
-            "cc_number": 113,
+            "cc_number": 115,
             "cc_value": 1,
             "name": "cab 1"
         },
         {
             "order": 12,
             "color": "red",
-            "cc_number": 114,
+            "cc_number": 116,
             "cc_value": 1,
             "name": "cab 2"
         },
         {
             "order": 13,
             "color": "red",
-            "cc_number": 115,
+            "cc_number": 118,
             "cc_value": 1,
             "name": "cab 3"
         },
         {
             "order": 14,
             "color": "red",
-            "cc_number": 116,
-            "cc_value": 1,
-            "name": "cab 4"
-        },
-        {
-            "order": 15,
-            "color": "red",
-            "cc_number": 117,
-            "cc_value": 1,
-            "name": "cab 5"
-        },
-        {
-            "order": 16,
-            "color": "red",
-            "cc_number": 118,
-            "cc_value": 1,
-            "name": "cab 6"
-        },
-        {
-            "order": 17,
-            "color": "red",
             "cc_number": 119,
             "cc_value": 1,
-            "name": "cab 7 "
+            "name": "cab 4"
         }
     ]
 }
