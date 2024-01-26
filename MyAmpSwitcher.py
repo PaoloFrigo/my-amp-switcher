@@ -15,8 +15,6 @@ from PyQt5.QtWidgets import (
     QGridLayout,
     QMainWindow,
     QAction,
-    QMenuBar,
-    QMenu,
     QDialog,
     QTextEdit,
 )
@@ -53,7 +51,7 @@ def load_settings():
         "port_name": "",
         "channel": 0,
         "profile": "default.json",  # Provide a default profile
-        "icon": "icon.png",  # Assuming there is an icon.png file
+        "icon": "icon.icns",  # Assuming there is an icon.icns file
     }
 
     if not os.path.isfile(settings_file_path):
@@ -491,6 +489,9 @@ def change_profile():
 
 def main():
     global settings, profile_data, output_port, window, midi_channel_combobox
+
+    logging.info("Application started")
+    logging.info(f"Version {__version__}")
 
     ensure_directories_exist()
 
