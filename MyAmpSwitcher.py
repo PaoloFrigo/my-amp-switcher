@@ -41,6 +41,47 @@ logging.basicConfig(
 )
 
 
+def ensure_directories_exist():
+    profiles_directory = os.path.join(script_directory, "profiles")
+    if not os.path.exists(profiles_directory):
+        os.makedirs(profiles_directory)
+
+
+def load_settings():
+    settings_file_path = os.path.join(script_directory, "settings.json")
+    default_settings = {
+        "port_name": "",
+        "channel": 0,
+        "profile": "default.json",  # Provide a default profile
+        "icon": "icon.png",  # Assuming there is an icon.png file
+    }
+
+    if not os.path.isfile(settings_file_path):
+        logging.warning("Settings file not found. Using default settings.")
+        return default_settings
+
+    try:
+        with open(settings_file_path) as settings_file:
+            return json.load(settings_file)
+    except Exception as e:
+        logging.error(f"Error loading settings: {e}")
+        return default_settings
+
+
+def load_profile_data(profile_name):
+    json_file_path = os.path.join(script_directory, "profiles", profile_name)
+    if not os.path.isfile(json_file_path):
+        logging.warning(f"Profile file not found: {profile_name}. Creating a new one.")
+        return {"name": "New Profile", "channel": 0, "buttons": []}
+
+    try:
+        with open(json_file_path) as json_file:
+            return json.load(json_file)
+    except Exception as e:
+        logging.error(f"Error loading profile data: {e}")
+        return {"name": "Error Profile", "channel": 0, "buttons": []}
+
+
 class MainWindow(QMainWindow):
     def __init__(self, profile_data):
         super(MainWindow, self).__init__()
@@ -87,7 +128,7 @@ class MainWindow(QMainWindow):
         midi_channel_combobox.setCurrentText(
             str(profile_data.get("channel", settings["channel"]))
         )
-        midi_channel_combobox.currentIndexChanged.connect(select_midi_channel)
+        midi_channel_combobox.currentIndexChanged.connect(self.select_midi_channel)
 
         # Save Button
         save_button = QPushButton("Save")
@@ -121,9 +162,13 @@ class MainWindow(QMainWindow):
             button.setMinimumHeight(40)
             button.setFont(QFont("Arial", 12))
             button.clicked.connect(
-               lambda _, pc=button_info.get("program_change", None),
-               cc_num=button_info.get("cc_number", None),
-               cc_val=button_info.get("cc_value", None): send_midi_message(pc, cc_num, cc_val)
+                lambda _, pc=button_info.get(
+                    "program_change", None
+                ), cc_num=button_info.get("cc_number", None), cc_val=button_info.get(
+                    "cc_value", None
+                ): send_midi_message(
+                    pc, cc_num, cc_val
+                )
             )
 
             # Calculate row and column indices
@@ -193,6 +238,10 @@ class MainWindow(QMainWindow):
 
     def load_profile(self):
         change_profile()
+
+    def select_midi_channel(self, index):
+        selected_channel = midi_channel_combobox.itemText(index)
+        settings["channel"] = int(selected_channel)
 
     def show_about_dialog(self):
         disclaimer = """<h2>DISCLAIMER</h2>
@@ -297,11 +346,18 @@ def send_midi_message(pc_number, cc_number, cc_value):
 
     try:
         if pc_number is not None:
-            program_change = mido.Message("program_change", channel=settings["channel"], program=pc_number)
+            program_change = mido.Message(
+                "program_change", channel=settings["channel"], program=pc_number
+            )
             output_port.send(program_change)
 
         if cc_number is not None and cc_value is not None:
-            cc_message = mido.Message('control_change', channel=settings["channel"], control=cc_number, value=cc_value)
+            cc_message = mido.Message(
+                "control_change",
+                channel=settings["channel"],
+                control=cc_number,
+                value=cc_value,
+            )
             output_port.send(cc_message)
 
     except Exception as e:
@@ -314,27 +370,34 @@ def select_midi_output(index):
     global output_port
     if output_port is not None:
         output_port.close()
-    output_port = mido.open_output(selected_port)
-
-
-def select_midi_channel(index):
-    selected_channel = midi_channel_combobox.itemText(index)
-    settings["channel"] = int(selected_channel)
+    try:
+        output_port = mido.open_output(selected_port)
+    except Exception as e:
+        logging.error(f"Error opening MIDI port: {e}")
+        QMessageBox.warning(None, "MIDI Output Error", f"Error opening MIDI port: {e}")
 
 
 def save_settings():
-    with open(os.path.join(script_directory, "settings.json"), "w") as settings_file:
-        json.dump(settings, settings_file, indent=4)
-    logging.info("Saved settings.json")
+    try:
+        with open(
+            os.path.join(script_directory, "settings.json"), "w"
+        ) as settings_file:
+            json.dump(settings, settings_file, indent=4)
+        logging.info("Saved settings.json")
 
-    new_profile_data = profile_data.copy()
-    new_profile_data["channel"] = int(midi_channel_combobox.currentText())
+        new_profile_data = profile_data.copy()
+        new_profile_data["channel"] = int(midi_channel_combobox.currentText())
 
-    with open(
-        os.path.join(script_directory, "profiles", settings["profile"]), "w"
-    ) as profile_file:
-        json.dump(new_profile_data, profile_file, indent=4)
-    logging.info(f"Saved {settings['profile']}")
+        with open(
+            os.path.join(script_directory, "profiles", settings["profile"]), "w"
+        ) as profile_file:
+            json.dump(new_profile_data, profile_file, indent=4)
+        logging.info(f"Saved {settings['profile']}")
+    except Exception as e:
+        logging.error(f"Error saving settings or profile data: {e}")
+        QMessageBox.warning(
+            None, "Save Error", f"Error saving settings or profile data: {e}"
+        )
 
 
 def change_profile():
@@ -362,11 +425,14 @@ def change_profile():
         window.close()
         window = MainWindow(profile_data)
         window.setWindowTitle(profile_data["name"])
-
         window.show()
 
 
-if __name__ == "__main__":
+def main():
+    global settings, profile_data, output_port, window, midi_channel_combobox
+
+    ensure_directories_exist()
+
     app = QApplication([])
 
     # SETTINGS
@@ -388,3 +454,7 @@ if __name__ == "__main__":
     window.show()
 
     app.exec_()
+
+
+if __name__ == "__main__":
+    main()
