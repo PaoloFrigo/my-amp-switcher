@@ -108,6 +108,16 @@ class MainWindow(QMainWindow):
         load_action.triggered.connect(self.load_profile)
         profile_menu.addAction(load_action)
 
+        profile_menu.addSeparator()
+
+        import_action = QAction("Import", self)
+        import_action.triggered.connect(self.import_profile)
+        profile_menu.addAction(import_action)
+
+        export_action = QAction("Export", self)
+        export_action.triggered.connect(self.export_profile)
+        profile_menu.addAction(export_action)
+
         help_menu = menubar.addMenu("About")
         about_action = QAction("Version", self)
         about_action.triggered.connect(self.show_about_dialog)
@@ -238,6 +248,57 @@ class MainWindow(QMainWindow):
 
     def load_profile(self):
         change_profile()
+    
+    def import_profile(self):
+        options = QFileDialog.Options()
+        options |= QFileDialog.DontUseNativeDialog
+        file_dialog = QFileDialog()
+        file_dialog.setFileMode(QFileDialog.ExistingFile)
+        file_dialog.setNameFilter("JSON files (*.json)")
+        file_dialog.setDirectory(os.path.join(script_directory, "profiles"))
+        file_dialog.setWindowTitle("Import Profile JSON File")
+        if file_dialog.exec_():
+            selected_file = file_dialog.selectedFiles()[0]
+            new_profile_name = os.path.basename(selected_file)
+
+            # Copy the selected file to the profiles directory
+            destination_path = os.path.join(script_directory, "profiles", new_profile_name)
+            shutil.copy(selected_file, destination_path)
+
+            # Load the new profile data
+            new_profile_data = load_profile_data(new_profile_name)
+
+            # Update the settings and profile_data
+            settings["profile"] = new_profile_name
+            global profile_data
+            profile_data = new_profile_data
+
+            save_settings()  # Save the changes to settings.json
+
+            self.close()
+            self.__init__(profile_data)
+            self.show()
+
+    def export_profile(self):
+        options = QFileDialog.Options()
+        options |= QFileDialog.DontUseNativeDialog
+        file_dialog = QFileDialog()
+        file_dialog.setFileMode(QFileDialog.AnyFile)
+        file_dialog.setAcceptMode(QFileDialog.AcceptSave)  # Fix this line
+        file_dialog.setNameFilter("JSON files (*.json)")
+        file_dialog.setDirectory(os.path.join(script_directory, "profiles"))
+        file_dialog.setWindowTitle("Export Profile JSON File")
+        if file_dialog.exec_():
+            selected_file = file_dialog.selectedFiles()[0]
+            export_profile_name = os.path.basename(selected_file)
+
+            # Save the current profile data to the selected file
+            with open(
+                os.path.join(script_directory, "profiles", export_profile_name), "w"
+            ) as profile_file:
+                json.dump(profile_data, profile_file, indent=4)
+            logging.info(f"Exported profile: {export_profile_name}")
+
 
     def select_midi_channel(self, index):
         selected_channel = midi_channel_combobox.itemText(index)
