@@ -11,12 +11,12 @@ DATA_FILES = [
 OPTIONS = {
     "argv_emulation": True,
     "packages": ["mido", "PyQt5"],
-    "includes": ["json", "PyQt5.QtWidgets", "PyQt5.QtGui"],
-    "iconfile": "icon.icns",
+    "includes": ["json"],
+    "iconfile": "icon.icns"
 }
 # Version and GitHub link
 VERSION = "1.0.0"
-GITHUB_URL = "https://github.com/your-username/your-project"
+GITHUB_URL = "https://github.com/paolofrigo/my-amp-switcher"
 
 
 setup(
@@ -25,9 +25,9 @@ setup(
     options={"py2app": OPTIONS},
     setup_requires=["py2app"],
     install_requires=[
-        "python-rtmidi",
-        "mido",
-        "PyQt5",
+        "mido==1.3.2",
+        "PyQt5==5.15.10",
+        "python-rtmidi==1.5.8",
     ],
     version=VERSION,
     url=GITHUB_URL,
