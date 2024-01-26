@@ -113,12 +113,18 @@ class MainWindow(QMainWindow):
         channel_buttons_layout = QGridLayout()
 
         for idx, button_info in enumerate(sorted_buttons):
-            pc_number = button_info.get("program_change", 0)
+            pc_number = button_info.get("program_change", None)
+            cc_number = button_info.get("cc_number", None)
+            cc_value = button_info.get("cc_value", None)
             name = button_info.get("name", "Unknown")
             button = QPushButton(name)
             button.setMinimumHeight(40)
             button.setFont(QFont("Arial", 12))
-            button.clicked.connect(lambda _, ch=pc_number: send_program_change(ch))
+            button.clicked.connect(
+               lambda _, pc=button_info.get("program_change", None),
+               cc_num=button_info.get("cc_number", None),
+               cc_val=button_info.get("cc_value", None): send_midi_message(pc, cc_num, cc_val)
+            )
 
             # Calculate row and column indices
             row, col = divmod(idx, 4)
@@ -280,7 +286,7 @@ def load_profile_data(profile_name):
         return json.load(json_file)
 
 
-def send_program_change(pc_number):
+def send_midi_message(pc_number, cc_number, cc_value):
     if output_port is None:
         QMessageBox.warning(
             None,
@@ -288,11 +294,16 @@ def send_program_change(pc_number):
             "Please connect a valid MIDI output port and try again",
         )
         return
-    program_change = mido.Message(
-        "program_change", channel=settings["channel"], program=pc_number
-    )
+
     try:
-        output_port.send(program_change)
+        if pc_number is not None:
+            program_change = mido.Message("program_change", channel=settings["channel"], program=pc_number)
+            output_port.send(program_change)
+
+        if cc_number is not None and cc_value is not None:
+            cc_message = mido.Message('control_change', channel=settings["channel"], control=cc_number, value=cc_value)
+            output_port.send(cc_message)
+
     except Exception as e:
         logging.error(f"Unexpected error: {e}")
 
