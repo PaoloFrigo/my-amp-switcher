@@ -27,9 +27,14 @@ jobs:
     - name: Build .app file
       run: |
         python setup.py py2app
+    
+    - name: Zip .app file
+      run: |
+        cd dist
+        zip -r MyApp.zip MyAmpSwitcher.app
 
     - name: Upload artifact
       uses: actions/upload-artifact@v2
       with:
         name: MyAmpSwitcher 
-        path: dist/MyAmpSwitcher.app  
+        path: dist/MyAmpSwitcher.zip  
