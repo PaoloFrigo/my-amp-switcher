@@ -4,7 +4,7 @@
     "buttons": [
         {
             "order": 0,
-            "color": "green",
+            "color": "",
             "program_change": 2,
             "name": "clean"
         },
