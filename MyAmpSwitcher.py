@@ -315,7 +315,7 @@ class MainWindow(QMainWindow):
                         <h2>SHOW YOUR SUPPORT</h2>
                         Don't forget to give a ⭐️ on github you found this app useful!"""
 
-        about_text = f"MyAmpSwitcher v{__version__} was created by Paolo Frigo and released as an open source project via the MIT License. <br><br>Visit the <a href='https://github.com/paolofrigo/my-amp-switcher'>official page on GitHub</a> for more information and check for new releases. {disclaimer}"
+        about_text = f"MyAmpSwitcher v{__version__} was created by Paolo Frigo and released as an open source project under the MIT License. <br><br>Visit the <a href='https://github.com/paolofrigo/my-amp-switcher'>official page on GitHub</a> for more information and check for new releases. {disclaimer}"
 
         about_dialog = QDialog(self)
         about_dialog.setWindowTitle("About MyAmpSwitcher")
