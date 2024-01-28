@@ -324,20 +324,22 @@ class MainWindow(QMainWindow):
         settings["channel"] = int(selected_channel)
 
     def show_about_dialog(self):
-        disclaimer = """<h2>DISCLAIMER</h2>
+        about_text = f"""<h1>MyAmpSwitcher v{__version__}</h1>
+                        MyAmpSwitcher was created by Paolo Frigo and released as an open source 
+                        project under the MIT License.
+                        <br><br>
+                        Visit the <a href='https://github.com/paolofrigo/my-amp-switcher'>official page on GitHub</a> 
+                        for more information and check for new releases. 
+                        <h2>SHOW YOUR SUPPORT</h2>
+                        Don't forget to give a ⭐️ on github you found this app useful!
+                        <h2>DISCLAIMER</h2>
                         THE SOFTWARE IS PROVIDED AS IS, WITHOUT WARRANTY OF ANY KIND, 
                         EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
                         MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. 
                         IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, 
                         DAMAGES OR OTHER LIABILITY,
                         WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
-                        CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-
-                        <h2>SHOW YOUR SUPPORT</h2>
-                        Don't forget to give a ⭐️ on github you found this app useful!"""
-
-        about_text = f"MyAmpSwitcher v{__version__} was created by Paolo Frigo and released as an open source project under the MIT License. <br><br>Visit the <a href='https://github.com/paolofrigo/my-amp-switcher'>official page on GitHub</a> for more information and check for new releases. {disclaimer}"
-
+                        CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE."""
         about_dialog = QDialog(self)
         about_dialog.setWindowTitle("About MyAmpSwitcher")
         about_dialog.setGeometry(200, 200, 400, 500)
