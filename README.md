@@ -8,7 +8,9 @@ This software is released under [the MIT license](./license).
 
 This application provides a graphical user interface for managing your amplifier or amp and cab switcher profiles and MIDI settings. It allows you to create, edit, load, import, and export profiles. You can easily switch between profiles and send MIDI messages to control your amplifier settings.
 
-![icon.jpeg](icon.jpeg)
+![preview](./media/preview.png)
+
+![icon.jpeg](media/icon.jpeg)
 
 
 ## Settings
@@ -93,7 +95,10 @@ To run the MyAmpSwitcher application, follow these steps:
     ```
 
 ## Usage
-Please make sure you connect the your midi interface before opening My-Amp-Swticher.
+* Please make sure you connect the your midi interface before opening My-Amp-Swticher.
+
+* Please consider that you OS when launching the app may require your authorisation for allowing the app to access your microphone.
+![microphone](./media/microphone_access.png)
 
 ## Show Your Support
 Don't forget to give a ⭐️ on GitHub if you find this app useful!
