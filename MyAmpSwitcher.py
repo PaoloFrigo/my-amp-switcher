@@ -81,10 +81,11 @@ def load_profile_data(profile_name):
 
 
 class MainWindow(QMainWindow):
-    def __init__(self, profile_data):
+    def __init__(self, profile_data, settings):
         super(MainWindow, self).__init__()
 
         self.profile_data = profile_data
+        self.settings = settings
 
         # Create menu bar
         menubar = self.menuBar()
@@ -207,6 +208,9 @@ class MainWindow(QMainWindow):
                 {"order": 0, "color": "green", "program_change": 1, "name": "clean"}
             ],
         }
+        
+        with open("settings.json","r") as file:
+            settings = json.loads(file.read())
 
         options = QFileDialog.Options()
         options |= QFileDialog.DontUseNativeDialog
@@ -257,6 +261,8 @@ class MainWindow(QMainWindow):
         change_profile()
     
     def import_profile(self):
+        with open("settings.json","r") as file:
+            settings = json.loads(file.read())
         options = QFileDialog.Options()
         options |= QFileDialog.DontUseNativeDialog
         file_dialog = QFileDialog()
@@ -287,6 +293,8 @@ class MainWindow(QMainWindow):
             self.show()
 
     def export_profile(self):
+        with open("settings.json","r") as file:
+            settings = json.loads(file.read())
         options = QFileDialog.Options()
         options |= QFileDialog.DontUseNativeDialog
         file_dialog = QFileDialog()
@@ -308,6 +316,9 @@ class MainWindow(QMainWindow):
 
 
     def select_midi_channel(self, index):
+        with open("settings.json","r") as file:
+            settings = json.loads(file.read())
+
         selected_channel = midi_channel_combobox.itemText(index)
         settings["channel"] = int(selected_channel)
 
@@ -387,7 +398,9 @@ class EditProfileWindow(QDialog):
     def reload_main_window(self):
         global window
         window.close()
-        window = MainWindow(profile_data)
+        with open("settings.json", "r") as file:
+            settings = json.loads(file.read())
+        window = MainWindow(profile_data,settings)
         window.setWindowTitle(profile_data["name"])
         window.show()
 
@@ -430,14 +443,19 @@ class EditSettingsWindow(QDialog):
             logging.info("Saved settings")
 
             self.accept()  # Close the window
-            self.reload_main_window()  # Reload the main window with the updated profile data
+              # Close the current instance of the app
+              # Close the current instance of the app
+            self.reload_main_window()
+  
         except json.JSONDecodeError as e:
             QMessageBox.warning(self, "Invalid JSON", f"Error in JSON format: {e}")
 
     def reload_main_window(self):
         global window
         window.close()
-        window = MainWindow(profile_data)
+        with open("settings.json", "r") as file:
+            settings = json.loads(file.read())
+        window = MainWindow(profile_data, settings)
         window.setWindowTitle(profile_data["name"])
         window.show()
 
@@ -527,6 +545,9 @@ def change_profile():
     file_dialog.setNameFilter("JSON files (*.json)")
     file_dialog.setDirectory(os.path.join(script_directory, "profiles"))
     file_dialog.setWindowTitle("Select Profile JSON File")
+    
+    with open("settings.json") as file:
+        settings = json.loads(file.read())
     if file_dialog.exec_():
         selected_file = file_dialog.selectedFiles()[0]
         new_profile_name = os.path.basename(selected_file)
@@ -541,7 +562,10 @@ def change_profile():
         save_settings()  # Save the changes to settings.json
 
         window.close()
-        window = MainWindow(profile_data)
+        
+        with open("settings.json", "r") as file:
+            settings = json.loads(file.read())
+        window = MainWindow(profile_data,settings)
         window.setWindowTitle(profile_data["name"])
         window.show()
 
@@ -570,7 +594,7 @@ def main():
     if not output_port:
         logging.error(f"Error: MIDI port '{port_name}' not found.")
 
-    window = MainWindow(profile_data)
+    window = MainWindow(profile_data, settings)
     window.setWindowTitle(profile_data["name"])
     window.show()
 
