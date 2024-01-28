@@ -208,8 +208,8 @@ class MainWindow(QMainWindow):
                 {"order": 0, "color": "green", "program_change": 1, "name": "clean"}
             ],
         }
-        
-        with open("settings.json","r") as file:
+
+        with open("settings.json", "r") as file:
             settings = json.loads(file.read())
 
         options = QFileDialog.Options()
@@ -252,16 +252,16 @@ class MainWindow(QMainWindow):
     def edit_profile(self):
         edit_profile_window = EditProfileWindow(profile_data)
         edit_profile_window.exec_()
-    
+
     def edit_settings(self):
         edit_settings__window = EditSettingsWindow(profile_data)
         edit_settings__window.exec_()
 
     def load_profile(self):
         change_profile()
-    
+
     def import_profile(self):
-        with open("settings.json","r") as file:
+        with open("settings.json", "r") as file:
             settings = json.loads(file.read())
         options = QFileDialog.Options()
         options |= QFileDialog.DontUseNativeDialog
@@ -275,7 +275,9 @@ class MainWindow(QMainWindow):
             new_profile_name = os.path.basename(selected_file)
 
             # Copy the selected file to the profiles directory
-            destination_path = os.path.join(script_directory, "profiles", new_profile_name)
+            destination_path = os.path.join(
+                script_directory, "profiles", new_profile_name
+            )
             shutil.copy(selected_file, destination_path)
 
             # Load the new profile data
@@ -293,7 +295,7 @@ class MainWindow(QMainWindow):
             self.show()
 
     def export_profile(self):
-        with open("settings.json","r") as file:
+        with open("settings.json", "r") as file:
             settings = json.loads(file.read())
         options = QFileDialog.Options()
         options |= QFileDialog.DontUseNativeDialog
@@ -314,9 +316,8 @@ class MainWindow(QMainWindow):
                 json.dump(profile_data, profile_file, indent=4)
             logging.info(f"Exported profile: {export_profile_name}")
 
-
     def select_midi_channel(self, index):
-        with open("settings.json","r") as file:
+        with open("settings.json", "r") as file:
             settings = json.loads(file.read())
 
         selected_channel = midi_channel_combobox.itemText(index)
@@ -400,7 +401,7 @@ class EditProfileWindow(QDialog):
         window.close()
         with open("settings.json", "r") as file:
             settings = json.loads(file.read())
-        window = MainWindow(profile_data,settings)
+        window = MainWindow(profile_data, settings)
         window.setWindowTitle(profile_data["name"])
         window.show()
 
@@ -414,7 +415,7 @@ class EditSettingsWindow(QDialog):
         self.setWindowTitle("Edit Settings")
         self.setGeometry(100, 100, 600, 400)
 
-        with open("settings.json","r") as file:
+        with open("settings.json", "r") as file:
             self.settings_data = json.loads(file.read())
 
         # Create a text area to display JSON content
@@ -443,10 +444,10 @@ class EditSettingsWindow(QDialog):
             logging.info("Saved settings")
 
             self.accept()  # Close the window
-              # Close the current instance of the app
-              # Close the current instance of the app
+            # Close the current instance of the app
+            # Close the current instance of the app
             self.reload_main_window()
-  
+
         except json.JSONDecodeError as e:
             QMessageBox.warning(self, "Invalid JSON", f"Error in JSON format: {e}")
 
@@ -545,7 +546,7 @@ def change_profile():
     file_dialog.setNameFilter("JSON files (*.json)")
     file_dialog.setDirectory(os.path.join(script_directory, "profiles"))
     file_dialog.setWindowTitle("Select Profile JSON File")
-    
+
     with open("settings.json") as file:
         settings = json.loads(file.read())
     if file_dialog.exec_():
@@ -562,10 +563,10 @@ def change_profile():
         save_settings()  # Save the changes to settings.json
 
         window.close()
-        
+
         with open("settings.json", "r") as file:
             settings = json.loads(file.read())
-        window = MainWindow(profile_data,settings)
+        window = MainWindow(profile_data, settings)
         window.setWindowTitle(profile_data["name"])
         window.show()
 

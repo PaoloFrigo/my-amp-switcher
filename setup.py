@@ -12,7 +12,7 @@ OPTIONS = {
     "argv_emulation": True,
     "packages": ["mido", "PyQt5"],
     "includes": ["json"],
-    "iconfile": "icon.icns"
+    "iconfile": "icon.icns",
 }
 # Version and GitHub link
 VERSION = "1.0.0"
