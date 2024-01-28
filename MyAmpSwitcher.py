@@ -116,6 +116,11 @@ class MainWindow(QMainWindow):
         export_action.triggered.connect(self.export_profile)
         profile_menu.addAction(export_action)
 
+        settings_menu = menubar.addMenu("Settings")
+        settings_action = QAction("Edit", self)
+        settings_action.triggered.connect(self.edit_settings)
+        settings_menu.addAction(settings_action)
+
         help_menu = menubar.addMenu("About")
         about_action = QAction("Version", self)
         about_action.triggered.connect(self.show_about_dialog)
@@ -168,7 +173,7 @@ class MainWindow(QMainWindow):
             name = button_info.get("name", "Unknown")
             button = QPushButton(name)
             button.setMinimumHeight(40)
-            button.setFont(QFont("Arial", 12))
+            button.setFont(QFont(settings["font"], settings["size"]))
             button.clicked.connect(
                 lambda _, pc=button_info.get(
                     "program_change", None
@@ -180,7 +185,7 @@ class MainWindow(QMainWindow):
             )
 
             # Calculate row and column indices
-            row, col = divmod(idx, 4)
+            row, col = divmod(idx, settings["buttons_per_row"])
             channel_buttons_layout.addWidget(button, row, col)
 
         central_layout.addLayout(channel_buttons_layout)
@@ -243,6 +248,10 @@ class MainWindow(QMainWindow):
     def edit_profile(self):
         edit_profile_window = EditProfileWindow(profile_data)
         edit_profile_window.exec_()
+    
+    def edit_settings(self):
+        edit_settings__window = EditSettingsWindow(profile_data)
+        edit_settings__window.exec_()
 
     def load_profile(self):
         change_profile()
@@ -369,6 +378,56 @@ class EditProfileWindow(QDialog):
             ) as profile_file:
                 json.dump(profile_data, profile_file, indent=4)
             logging.info(f"Saved {settings['profile']}")
+
+            self.accept()  # Close the window
+            self.reload_main_window()  # Reload the main window with the updated profile data
+        except json.JSONDecodeError as e:
+            QMessageBox.warning(self, "Invalid JSON", f"Error in JSON format: {e}")
+
+    def reload_main_window(self):
+        global window
+        window.close()
+        window = MainWindow(profile_data)
+        window.setWindowTitle(profile_data["name"])
+        window.show()
+
+
+class EditSettingsWindow(QDialog):
+    def __init__(self, profile_data):
+        super(EditSettingsWindow, self).__init__()
+
+        self.profile_data = profile_data
+
+        self.setWindowTitle("Edit Settings")
+        self.setGeometry(100, 100, 600, 400)
+
+        with open("settings.json","r") as file:
+            self.settings_data = json.loads(file.read())
+
+        # Create a text area to display JSON content
+        self.json_text = QTextEdit(self)
+        self.json_text.setPlainText(json.dumps(self.settings_data, indent=4))
+
+        # Save Button
+        save_button = QPushButton("Save", self)
+        save_button.clicked.connect(self.save_and_close)
+
+        layout = QVBoxLayout()
+        layout.addWidget(self.json_text)
+        layout.addWidget(save_button)
+
+        self.setLayout(layout)
+
+    def save_and_close(self):
+        # Update settings_data based on user modifications
+        try:
+            new_settings_data = json.loads(self.json_text.toPlainText())
+            self.settings_data.update(new_settings_data)
+
+            # Save the changes to the settings file
+            with open("settings.json", "w") as settings_file:
+                json.dump(self.settings_data, settings_file, indent=4)
+            logging.info("Saved settings")
 
             self.accept()  # Close the window
             self.reload_main_window()  # Reload the main window with the updated profile data
