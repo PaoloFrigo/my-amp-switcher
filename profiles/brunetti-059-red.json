@@ -1,0 +1,48 @@
+{
+    "name": "Brunetti 059",
+    "channel": 0,
+    "buttons": [
+        {
+            "order": 0,
+            "color": "green",
+            "program_change": 10,
+            "name": "clean"
+        },
+        {
+            "order": 1,
+            "color": "green",
+            "program_change": 11,
+            "name": "crunch"
+        },
+        {
+            "order": 2,
+            "color": "green",
+            "program_change": 12,
+            "name": "crunch+mid"
+        },
+        {
+            "order": 3,
+            "color": "green",
+            "program_change": 15,
+            "name": "crunch+reverse"
+        },
+        {
+            "order": 4,
+            "color": "green",
+            "program_change": 13,
+            "name": "solo"
+        },
+        {
+            "order": 5,
+            "color": "green",
+            "program_change": 14,
+            "name": "solo+mid"
+        },
+        {
+            "order": 6,
+            "color": "green",
+            "program_change": 17,
+            "name": "solo+reverse"
+        }
+    ]
+}
