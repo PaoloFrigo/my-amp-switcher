@@ -6,9 +6,12 @@ This software is released under [the MIT license](./license).
 
 ## Overview
 
-This application provides a graphical user interface for managing your amplifier or amp and cab switcher profiles and MIDI settings. It allows you to create, edit, load, import, and export profiles. You can easily switch between profiles and send MIDI messages to control your amplifier settings.
+This application provides a graphical user interface written using QT libraries for managing your amplifier or amp and cab switcher profiles and MIDI settings. It allows you to create, edit, load, import, and export profiles. You can easily switch between profiles and send MIDI messages to control your amplifier settings.
 
+Preview of the MacOS version:
 ![preview](./media/preview.png)
+
+Please note that MyAmpSwitcher can run on MacOS/Windows/Linux considering that is built with Python and QT and Midi libraries are ported across these platforms.
 
 ![icon.jpeg](media/icon.jpeg)
 
