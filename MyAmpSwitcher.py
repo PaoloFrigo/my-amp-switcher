@@ -2,6 +2,7 @@ import json
 import mido
 import logging
 import os
+import sys
 from PyQt5.QtWidgets import (
     QApplication,
     QPushButton,
@@ -28,7 +29,7 @@ profile_data = None
 output_port = None
 window = None
 midi_channel_combobox = None
-__version__ = "1.0.0"
+__version__ = "1.0.0 (BETA)"
 
 # Configure logging
 log_file_path = os.path.join(script_directory, "MyAmpSwitcher.log")
@@ -209,8 +210,7 @@ class MainWindow(QMainWindow):
             ],
         }
 
-        with open("settings.json", "r") as file:
-            settings = json.loads(file.read())
+        settings = load_settings()
 
         options = QFileDialog.Options()
         options |= QFileDialog.DontUseNativeDialog
@@ -261,8 +261,7 @@ class MainWindow(QMainWindow):
         change_profile()
 
     def import_profile(self):
-        with open("settings.json", "r") as file:
-            settings = json.loads(file.read())
+        settings = load_settings()
         options = QFileDialog.Options()
         options |= QFileDialog.DontUseNativeDialog
         file_dialog = QFileDialog()
@@ -295,8 +294,7 @@ class MainWindow(QMainWindow):
             self.show()
 
     def export_profile(self):
-        with open("settings.json", "r") as file:
-            settings = json.loads(file.read())
+        settings = load_settings()
         options = QFileDialog.Options()
         options |= QFileDialog.DontUseNativeDialog
         file_dialog = QFileDialog()
@@ -317,14 +315,13 @@ class MainWindow(QMainWindow):
             logging.info(f"Exported profile: {export_profile_name}")
 
     def select_midi_channel(self, index):
-        with open("settings.json", "r") as file:
-            settings = json.loads(file.read())
+        settings = load_settings()
 
         selected_channel = midi_channel_combobox.itemText(index)
         settings["channel"] = int(selected_channel)
 
     def show_about_dialog(self):
-        about_text = f"""<h1>MyAmpSwitcher v{__version__}</h1>
+        about_text = f"""<h2>MyAmpSwitcher v{__version__}</h2>
                         MyAmpSwitcher was created by Paolo Frigo and released as an open source 
                         project under the MIT License.
                         <br><br>
@@ -401,8 +398,7 @@ class EditProfileWindow(QDialog):
     def reload_main_window(self):
         global window
         window.close()
-        with open("settings.json", "r") as file:
-            settings = json.loads(file.read())
+        settings = load_settings()
         window = MainWindow(profile_data, settings)
         window.setWindowTitle(profile_data["name"])
         window.show()
@@ -416,9 +412,8 @@ class EditSettingsWindow(QDialog):
 
         self.setWindowTitle("Edit Settings")
         self.setGeometry(100, 100, 600, 400)
-
-        with open("settings.json", "r") as file:
-            self.settings_data = json.loads(file.read())
+        
+        self.settings_data = load_settings()
 
         # Create a text area to display JSON content
         self.json_text = QTextEdit(self)
@@ -441,7 +436,7 @@ class EditSettingsWindow(QDialog):
             self.settings_data.update(new_settings_data)
 
             # Save the changes to the settings file
-            with open("settings.json", "w") as settings_file:
+            with open(os.path.join(script_directory, "settings.json"), "w") as settings_file:
                 json.dump(self.settings_data, settings_file, indent=4)
             logging.info("Saved settings")
 
@@ -456,8 +451,7 @@ class EditSettingsWindow(QDialog):
     def reload_main_window(self):
         global window
         window.close()
-        with open("settings.json", "r") as file:
-            settings = json.loads(file.read())
+        settings = load_settings()
         window = MainWindow(profile_data, settings)
         window.setWindowTitle(profile_data["name"])
         window.show()
@@ -549,8 +543,7 @@ def change_profile():
     file_dialog.setDirectory(os.path.join(script_directory, "profiles"))
     file_dialog.setWindowTitle("Select Profile JSON File")
 
-    with open("settings.json") as file:
-        settings = json.loads(file.read())
+    settings = load_settings()
     if file_dialog.exec_():
         selected_file = file_dialog.selectedFiles()[0]
         new_profile_name = os.path.basename(selected_file)
@@ -565,9 +558,6 @@ def change_profile():
         save_settings()  # Save the changes to settings.json
 
         window.close()
-
-        with open("settings.json", "r") as file:
-            settings = json.loads(file.read())
         window = MainWindow(profile_data, settings)
         window.setWindowTitle(profile_data["name"])
         window.show()
@@ -601,7 +591,14 @@ def main():
     window.setWindowTitle(profile_data["name"])
     window.show()
 
-    app.exec_()
+    def cleanup():
+        logging.info("Cleaning up resources...")
+        if output_port:
+            output_port.close()
+
+    app.aboutToQuit.connect(cleanup)
+    sys.exit(app.exec_())
+
 
 
 if __name__ == "__main__":

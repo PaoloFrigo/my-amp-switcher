@@ -1,9 +1,9 @@
 {
     "port_name": "USB MIDI CABLE",
-    "profile": "n-audio-8X7.json",
-    "icon": "icon.icns",
+    "profile": "test1.json",
+    "icon": "icon.ico",
     "channel": 0,
-    "font": "Helvetica",
+    "font": "Arial",
     "size": 14,
     "buttons_per_row": 4
 }
