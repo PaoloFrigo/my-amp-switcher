@@ -7,7 +7,11 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      matrix:
+        os: [macos-latest, windows-latest]
 
     steps:
     - name: Checkout repository
@@ -22,39 +26,23 @@ jobs:
       run: |
         python -m pip install --upgrade pip
         pip install -r requirements.txt
-        pip install py2app pyinstaller
+        ${{ matrix.os == 'macos-latest' && 'pip install py2app' || 'pip install pyinstaller' }}
 
-    - name: Build macOS .app file
+    - name: Build
       run: |
-        python setup.py py2app
+        ${{ matrix.os == 'macos-latest' && 'python setup.py py2app' || 'pyinstaller --onefile MyAmpSwitcher.py && mv dist/MyAmpSwitcher dist/MyAmpSwitcher.exe' }}
 
-    - name: Build Windows installer
-      run: |
-        pyinstaller --onefile MyAmpSwitcher.py
-        mv dist/MyAmpSwitcher dist/MyAmpSwitcher.exe  # Rename the executable
-
-    - name: Zip macOS .app file
+    - name: Zip
       run: |
         cd dist
-        zip -r MyAmpSwitcher_macOS.zip MyAmpSwitcher.app
+        ${{ matrix.os == 'macos-latest' && 'zip -r MyAmpSwitcher_macOS.zip MyAmpSwitcher.app' || 'zip MyAmpSwitcher_Windows.zip MyAmpSwitcher.exe' }}
 
-    - name: Zip Windows installer
-      run: |
-        cd dist
-        zip -r MyAmpSwitcher_Windows.zip MyAmpSwitcher.exe
-
-    - name: Upload macOS artifact
+    - name: Upload artifact
       uses: actions/upload-artifact@v2
       with:
-        name: MyAmpSwitcher_macOS
-        path: dist/MyAmpSwitcher_macOS.zip  
-
-    - name: Upload Windows artifact
-      uses: actions/upload-artifact@v2
-      with:
-        name: MyAmpSwitcher_Windows
-        path: dist/MyAmpSwitcher_Windows.zip  
-
+        name: ${{ matrix.os == 'macos-latest' && 'MyAmpSwitcher_macOS' || 'MyAmpSwitcher_Windows' }}
+        path: dist
+        
   cleanup:
     runs-on: ubuntu-latest
 
