@@ -1,4 +1,4 @@
-from setuptools import setup
+from setuptools import setup, find_packages
 
 # Version and GitHub link
 VERSION = "1.0.0"
@@ -6,7 +6,7 @@ GITHUB_URL = "https://github.com/paolofrigo/my-amp-switcher"
 
 APP = ["MyAmpSwitcher.py"]
 DATA_FILES = [
-    ("profiles", ["profiles"]),  # Include the 'profiles' folder and its contents
+    (".", ["profiles"]),  # Include the 'profiles' folder and its contents
     (
         ".",
         ["icon.icns", "icon.ico", "settings.json"],
@@ -37,10 +37,12 @@ setup(
         'pyinstaller': WINDOWS_OPTIONS,
     },
     install_requires=[
-        'mido==1.3.2',
-        'PyQt5==5.15.10',
-        'python-rtmidi==1.5.8',
+        'mido',
+        'PyQt5',
+        'python-rtmidi',
     ],
     version=VERSION,
     url=GITHUB_URL,
+    packages=find_packages(),
+
 )
