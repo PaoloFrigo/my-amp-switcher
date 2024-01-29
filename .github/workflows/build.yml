@@ -38,3 +38,16 @@ jobs:
       with:
         name: MyAmpSwitcher 
         path: dist/MyAmpSwitcher.zip  
+
+  cleanup:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Download artifacts
+        uses: actions/download-artifact@v2
+        with:
+          name: MyAmpSwitcher
+
+      - name: Remove old artifacts
+        run: |
+          ls -1 | sort -r | tail -n +3 | xargs rm -rf
