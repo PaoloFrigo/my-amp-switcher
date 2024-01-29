@@ -1,4 +1,4 @@
-name: Build macOS App
+name: Build macOS and Windows Apps
 
 on:
   push:
@@ -7,7 +7,7 @@ on:
 
 jobs:
   build:
-    runs-on: macos-latest
+    runs-on: ubuntu-latest
 
     steps:
     - name: Checkout repository
@@ -22,32 +22,57 @@ jobs:
       run: |
         python -m pip install --upgrade pip
         pip install -r requirements.txt
-        pip install py2app
+        pip install py2app pyinstaller
 
-    - name: Build .app file
+    - name: Build macOS .app file
       run: |
         python setup.py py2app
-    
-    - name: Zip .app file
+
+    - name: Build Windows installer
+      run: |
+        pyinstaller --onefile MyAmpSwitcher.py
+        mv dist/MyAmpSwitcher dist/MyAmpSwitcher.exe  # Rename the executable
+
+    - name: Zip macOS .app file
       run: |
         cd dist
-        zip -r MyAmpSwitcher.zip MyAmpSwitcher.app
+        zip -r MyAmpSwitcher_macOS.zip MyAmpSwitcher.app
 
-    - name: Upload artifact
+    - name: Zip Windows installer
+      run: |
+        cd dist
+        zip MyAmpSwitcher_Windows.zip MyAmpSwitcher.exe
+
+    - name: Upload macOS artifact
       uses: actions/upload-artifact@v2
       with:
-        name: MyAmpSwitcher 
-        path: dist/MyAmpSwitcher.zip  
+        name: MyAmpSwitcher_macOS
+        path: dist/MyAmpSwitcher_macOS.zip  
+
+    - name: Upload Windows artifact
+      uses: actions/upload-artifact@v2
+      with:
+        name: MyAmpSwitcher_Windows
+        path: dist/MyAmpSwitcher_Windows.zip  
 
   cleanup:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Download artifacts
+      - name: Download macOS artifacts
         uses: actions/download-artifact@v2
         with:
-          name: MyAmpSwitcher
+          name: MyAmpSwitcher_macOS
 
-      - name: Remove old artifacts
+      - name: Remove old macOS artifacts
         run: |
-          ls -1 | sort -r | tail -n +3 | xargs rm -rf
+          ls -1 | grep '_macOS.zip$' | sort -r | tail -n +3 | xargs rm -rf
+
+      - name: Download Windows artifacts
+        uses: actions/download-artifact@v2
+        with:
+          name: MyAmpSwitcher_Windows
+
+      - name: Remove old Windows artifacts
+        run: |
+          ls -1 | grep '_Windows.zip$' | sort -r | tail -n +3 | xargs rm -rf
