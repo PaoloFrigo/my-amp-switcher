@@ -41,7 +41,7 @@ jobs:
     - name: Zip Windows installer
       run: |
         cd dist
-        zip MyAmpSwitcher_Windows.zip MyAmpSwitcher.exe
+        zip -r MyAmpSwitcher_Windows.zip MyAmpSwitcher.exe
 
     - name: Upload macOS artifact
       uses: actions/upload-artifact@v2
@@ -66,7 +66,9 @@ jobs:
 
       - name: Remove old macOS artifacts
         run: |
-          ls -1 | grep '_macOS.zip$' | sort -r | tail -n +3 | xargs rm -rf
+          if [ -f dist/MyAmpSwitcher_macOS.zip ]; then
+            ls -1 | grep '_macOS.zip$' | sort -r | tail -n +3 | xargs rm -rf
+          fi
 
       - name: Download Windows artifacts
         uses: actions/download-artifact@v2
@@ -75,4 +77,6 @@ jobs:
 
       - name: Remove old Windows artifacts
         run: |
-          ls -1 | grep '_Windows.zip$' | sort -r | tail -n +3 | xargs rm -rf
+          if [ -f dist/MyAmpSwitcher_Windows.zip ]; then
+            ls -1 | grep '_Windows.zip$' | sort -r | tail -n +3 | xargs rm -rf
+          fi
