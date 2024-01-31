@@ -1,0 +1,25 @@
+{
+    "name": "Sample",
+    "channel": 0,
+    "buttons": [
+        {
+            "order": 1,
+            "color": "green",
+            "program_change": 11,
+            "name": "clean"
+        },
+        {
+            "order": 2,
+            "color": "red",
+            "program_change": 21,
+            "name": "od"
+        },
+        {
+            "order": 3,
+            "color": "green",
+            "cc_number": 102,
+            "cc_value": 1,
+            "name": "fx"
+        }
+    ]
+}

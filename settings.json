@@ -1,8 +1,7 @@
 {
     "port_name": "USB MIDI CABLE",
-    "profile": "test1.json",
+    "profile": "brunetti-xl2-revo.json",
     "icon": "icon.ico",
-    "channel": 0,
     "font": "Arial",
     "size": 14,
     "buttons_per_row": 4

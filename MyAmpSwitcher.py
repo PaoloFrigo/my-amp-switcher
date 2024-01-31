@@ -141,13 +141,13 @@ class MainWindow(QMainWindow):
         midi_channel_combobox = QComboBox()
         midi_channel_combobox.addItems(map(str, range(128)))  # Adding values 0 to 127
         midi_channel_combobox.setCurrentText(
-            str(profile_data.get("channel", settings["channel"]))
+            str(profile_data.get("channel", 0))
         )
         midi_channel_combobox.currentIndexChanged.connect(self.select_midi_channel)
 
         # Save Button
         save_button = QPushButton("Save")
-        save_button.clicked.connect(save_settings)
+        save_button.clicked.connect(save_channel)
 
         # Create a horizontal layout for MIDI output, channel, save, and profile change buttons
         midi_layout = QHBoxLayout()
@@ -287,7 +287,7 @@ class MainWindow(QMainWindow):
             global profile_data
             profile_data = new_profile_data
 
-            save_settings()  # Save the changes to settings.json
+            save_settings(new_profile_name)  # Save the changes to settings.json
 
             self.close()
             self.__init__(profile_data)
@@ -315,10 +315,11 @@ class MainWindow(QMainWindow):
             logging.info(f"Exported profile: {export_profile_name}")
 
     def select_midi_channel(self, index):
-        settings = load_settings()
+        profile = profile_data
 
         selected_channel = midi_channel_combobox.itemText(index)
-        settings["channel"] = int(selected_channel)
+        profile["channel"] = int(selected_channel)
+
 
     def show_about_dialog(self):
         about_text = f"""<h2>MyAmpSwitcher v{__version__}</h2>
@@ -510,16 +511,11 @@ def select_midi_output(index):
         QMessageBox.warning(None, "MIDI Output Error", f"Error opening MIDI port: {e}")
 
 
-def save_settings():
+def save_channel():
     try:
-        with open(
-            os.path.join(script_directory, "settings.json"), "w"
-        ) as settings_file:
-            json.dump(settings, settings_file, indent=4)
-        logging.info("Saved settings.json")
-
-        new_profile_data = profile_data.copy()
-        new_profile_data["channel"] = int(midi_channel_combobox.currentText())
+        if profile_data:
+            new_profile_data = profile_data.copy()
+            new_profile_data["channel"] = int(midi_channel_combobox.currentText())
 
         with open(
             os.path.join(script_directory, "profiles", settings["profile"]), "w"
@@ -527,9 +523,34 @@ def save_settings():
             json.dump(new_profile_data, profile_file, indent=4)
         logging.info(f"Saved {settings['profile']}")
     except Exception as e:
-        logging.error(f"Error saving settings or profile data: {e}")
+        logging.error(f"Error saving profile data: {e}")
         QMessageBox.warning(
-            None, "Save Error", f"Error saving settings or profile data: {e}"
+            None, "Save Error", f"Error saving profile data: {e}"
+        )
+
+def save_settings(profile_name=None):
+    try:
+        if profile_name is not None or profile_name is not False:
+            settings["profile"]= profile_name
+            with open(
+                os.path.join(script_directory, "settings.json"), "w"
+            ) as settings_file:
+                json.dump(settings, settings_file, indent=4)
+            logging.info("Saved settings.json")
+
+        if profile_data:
+            new_profile_data = profile_data.copy()
+            new_profile_data["channel"] = int(midi_channel_combobox.currentText())
+
+        # with open(
+        #     os.path.join(script_directory, "profiles", settings["profile"]), "w"
+        # ) as profile_file:
+        #     json.dump(new_profile_data, profile_file, indent=4)
+        # logging.info(f"Saved {settings['profile']}")
+    except Exception as e:
+        logging.error(f"Error saving settings: {e}")
+        QMessageBox.warning(
+            None, "Save Error", f"Error saving settings: {e}"
         )
 
 
@@ -555,7 +576,7 @@ def change_profile():
         settings["profile"] = new_profile_name
         profile_data = new_profile_data
 
-        save_settings()  # Save the changes to settings.json
+        save_settings(os.path.basename(selected_file))  # Save the changes to settings.json
 
         window.close()
         window = MainWindow(profile_data, settings)
@@ -575,7 +596,11 @@ def main():
 
     # SETTINGS
     settings = load_settings()
-    profile_data = load_profile_data(settings["profile"])
+    try:
+        profile_data = load_profile_data(settings["profile"])
+    except:
+        profile_data = load_profile_data("sample.json")
+        save_settings("sample.json")
 
     port_name = settings["port_name"]
     output_port = None
