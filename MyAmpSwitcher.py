@@ -18,6 +18,7 @@ from PyQt5.QtWidgets import (
     QAction,
     QDialog,
     QTextEdit,
+    QStatusBar
 )
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QIcon, QFont
@@ -197,9 +198,18 @@ class MainWindow(QMainWindow):
         title_width = len(profile_data["name"]) * 10 + 50
         self.resize(title_width, 100)
 
+        # Set status bar
+        self.statusBar = QStatusBar()
+        self.setStatusBar(self.statusBar)
+
+        self.statusBar.showMessage("Ready", 2000) 
+
         # Set the application icon
         app_icon = QIcon(os.path.join(script_directory, settings["icon"]))
         self.setWindowIcon(app_icon)
+
+    def update_status_bar(self, message, timeout=2000):
+        self.statusBar.showMessage(message, timeout)
 
     def new_profile(self):
         template_json = {
@@ -247,6 +257,9 @@ class MainWindow(QMainWindow):
             )  # Update window title with the new profile name
             self.close()
             self.__init__(profile_data)
+            
+            window.update_status_bar(f"New profile {new_profile_name} created successfully")
+
             self.show()
 
     def edit_profile(self):
@@ -402,6 +415,8 @@ class EditProfileWindow(QDialog):
         settings = load_settings()
         window = MainWindow(profile_data, settings)
         window.setWindowTitle(profile_data["name"])
+        window.update_status_bar(f"Profile saved successfully")
+
         window.show()
 
 
@@ -455,6 +470,7 @@ class EditSettingsWindow(QDialog):
         settings = load_settings()
         window = MainWindow(profile_data, settings)
         window.setWindowTitle(profile_data["name"])
+        window.update_status_bar("Settings saved successfully")
         window.show()
 
 
@@ -479,21 +495,24 @@ def send_midi_message(pc_number, cc_number, cc_value):
         return
 
     try:
+        status_message = "Midi "
         if pc_number is not None:
             program_change = mido.Message(
-                "program_change", channel=settings["channel"], program=pc_number
+                "program_change", channel=profile_data["channel"], program=pc_number
             )
             output_port.send(program_change)
+            status_message += f"PC: {pc_number}"
 
         if cc_number is not None and cc_value is not None:
             cc_message = mido.Message(
                 "control_change",
-                channel=settings["channel"],
+                channel=profile_data["channel"],
                 control=cc_number,
                 value=cc_value,
             )
             output_port.send(cc_message)
-
+            status_message += (f"CC Number: {cc_number} value: {cc_value}")
+        window.update_status_bar(status_message)
     except Exception as e:
         logging.error(f"Unexpected error: {e}")
 
@@ -521,6 +540,7 @@ def save_channel():
             os.path.join(script_directory, "profiles", settings["profile"]), "w"
         ) as profile_file:
             json.dump(new_profile_data, profile_file, indent=4)
+        window.update_status_bar(f"Midi Channel saved successfully on profile '{settings['profile']}'")
         logging.info(f"Saved {settings['profile']}")
     except Exception as e:
         logging.error(f"Error saving profile data: {e}")
@@ -581,6 +601,7 @@ def change_profile():
         window.close()
         window = MainWindow(profile_data, settings)
         window.setWindowTitle(profile_data["name"])
+        window.update_status_bar("Profile loaded successfully")
         window.show()
 
 
