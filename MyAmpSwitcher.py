@@ -130,12 +130,16 @@ class MainWindow(QMainWindow):
         help_menu.addAction(about_action)
 
         # MIDI Output ComboBox
-        midi_outputs = self.reload_midi_output()
         midi_output_label = QLabel("MIDI Output:")
+        global midi_output_combobox
         midi_output_combobox = QComboBox()
-        midi_output_combobox.addItems(midi_outputs)
-        midi_output_combobox.setCurrentText(settings["port_name"])
+        midi_outputs = self.reload_midi_output()
+        # midi_output_combobox.addItems(midi_outputs)
+        # midi_output_combobox.setCurrentText(settings["port_name"])
         midi_output_combobox.currentIndexChanged.connect(select_midi_output)
+
+        refresh_midi_button = QPushButton("Refresh")
+        refresh_midi_button.clicked.connect(self.reload_midi_output)
 
         # MIDI Channel ComboBox
         global midi_channel_combobox
@@ -155,6 +159,7 @@ class MainWindow(QMainWindow):
         midi_layout = QHBoxLayout()
         midi_layout.addWidget(midi_output_label)
         midi_layout.addWidget(midi_output_combobox)
+        midi_layout.addWidget(refresh_midi_button)   
         midi_layout.addWidget(midi_channel_label)
         midi_layout.addWidget(midi_channel_combobox)
         midi_layout.addWidget(save_button)
@@ -336,6 +341,13 @@ class MainWindow(QMainWindow):
 
     def reload_midi_output(self):
         midi_outputs = mido.get_output_names()
+        current_items = list(set([midi_output_combobox.itemText(index) for index in range(midi_output_combobox.count())]))
+        if  midi_outputs != current_items:
+            midi_output_combobox.clear()
+            midi_output_combobox.addItems(midi_outputs)
+            midi_output_combobox.setCurrentText(settings["port_name"])
+        else :
+            pass
         return midi_outputs
 
     def show_about_dialog(self):
