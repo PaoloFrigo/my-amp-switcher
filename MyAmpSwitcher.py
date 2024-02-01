@@ -256,7 +256,7 @@ class MainWindow(QMainWindow):
                 new_profile_name
             )  # Update window title with the new profile name
             self.close()
-            self.__init__(profile_data)
+            self.__init__(profile_data,load_settings())
             
             window.update_status_bar(f"New profile {new_profile_name} created successfully")
 
@@ -501,7 +501,7 @@ def send_midi_message(pc_number, cc_number, cc_value):
                 "program_change", channel=profile_data["channel"], program=pc_number
             )
             output_port.send(program_change)
-            status_message += f"PC: {pc_number}"
+            status_message += f"Program: {pc_number}"
 
         if cc_number is not None and cc_value is not None:
             cc_message = mido.Message(
@@ -511,7 +511,7 @@ def send_midi_message(pc_number, cc_number, cc_value):
                 value=cc_value,
             )
             output_port.send(cc_message)
-            status_message += (f"CC Number: {cc_number} value: {cc_value}")
+            status_message += (f"Control: {cc_number} Value: {cc_value}")
         window.update_status_bar(status_message)
     except Exception as e:
         logging.error(f"Unexpected error: {e}")
