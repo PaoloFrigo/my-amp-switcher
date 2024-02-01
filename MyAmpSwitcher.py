@@ -2,6 +2,7 @@ import json
 import mido
 import logging
 import os
+import shutil
 import sys
 from PyQt5.QtWidgets import (
     QApplication,
@@ -18,7 +19,7 @@ from PyQt5.QtWidgets import (
     QAction,
     QDialog,
     QTextEdit,
-    QStatusBar
+    QStatusBar,
 )
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QIcon, QFont
@@ -146,9 +147,7 @@ class MainWindow(QMainWindow):
         midi_channel_label = QLabel("Channel:")
         midi_channel_combobox = QComboBox()
         midi_channel_combobox.addItems(map(str, range(128)))  # Adding values 0 to 127
-        midi_channel_combobox.setCurrentText(
-            str(profile_data.get("channel", 0))
-        )
+        midi_channel_combobox.setCurrentText(str(profile_data.get("channel", 0)))
         midi_channel_combobox.currentIndexChanged.connect(self.select_midi_channel)
 
         # Save Button
@@ -159,7 +158,7 @@ class MainWindow(QMainWindow):
         midi_layout = QHBoxLayout()
         midi_layout.addWidget(midi_output_label)
         midi_layout.addWidget(midi_output_combobox)
-        midi_layout.addWidget(refresh_midi_button)   
+        midi_layout.addWidget(refresh_midi_button)
         midi_layout.addWidget(midi_channel_label)
         midi_layout.addWidget(midi_channel_combobox)
         midi_layout.addWidget(save_button)
@@ -208,7 +207,7 @@ class MainWindow(QMainWindow):
         self.statusBar = QStatusBar()
         self.setStatusBar(self.statusBar)
 
-        self.statusBar.showMessage("Ready", 2000) 
+        self.statusBar.showMessage("Ready", 2000)
 
         # Set the application icon
         app_icon = QIcon(os.path.join(script_directory, settings["icon"]))
@@ -262,9 +261,11 @@ class MainWindow(QMainWindow):
                 new_profile_name
             )  # Update window title with the new profile name
             self.close()
-            self.__init__(profile_data,load_settings())
-            
-            window.update_status_bar(f"New profile {new_profile_name} created successfully")
+            self.__init__(profile_data, load_settings())
+
+            window.update_status_bar(
+                f"New profile {new_profile_name} created successfully"
+            )
 
             self.show()
 
@@ -297,20 +298,14 @@ class MainWindow(QMainWindow):
                 script_directory, "profiles", new_profile_name
             )
             shutil.copy(selected_file, destination_path)
+            global profile_data
 
             # Load the new profile data
             new_profile_data = load_profile_data(new_profile_name)
 
             # Update the settings and profile_data
             settings["profile"] = new_profile_name
-            global profile_data
-            profile_data = new_profile_data
-
-            save_settings(new_profile_name)  # Save the changes to settings.json
-
-            self.close()
-            self.__init__(profile_data)
-            self.show()
+            change_profile()
 
     def export_profile(self):
         settings = load_settings()
@@ -321,16 +316,17 @@ class MainWindow(QMainWindow):
         file_dialog.setAcceptMode(QFileDialog.AcceptSave)  # Fix this line
         file_dialog.setNameFilter("JSON files (*.json)")
         file_dialog.setDirectory(os.path.join(script_directory, "profiles"))
-        file_dialog.setWindowTitle("Export Profile JSON File")
+        file_dialog.setWindowTitle("Export the this profile as JSON File")
         if file_dialog.exec_():
             selected_file = file_dialog.selectedFiles()[0]
             export_profile_name = os.path.basename(selected_file)
 
             # Save the current profile data to the selected file
-            with open(
-                os.path.join(script_directory, "profiles", export_profile_name), "w"
-            ) as profile_file:
+            with open(selected_file, "w") as profile_file:
                 json.dump(profile_data, profile_file, indent=4)
+            self.update_status_bar(
+                f"Profile exported successfully: {export_profile_name}"
+            )
             logging.info(f"Exported profile: {export_profile_name}")
 
     def select_midi_channel(self, index):
@@ -341,12 +337,19 @@ class MainWindow(QMainWindow):
 
     def reload_midi_output(self):
         midi_outputs = mido.get_output_names()
-        current_items = list(set([midi_output_combobox.itemText(index) for index in range(midi_output_combobox.count())]))
-        if  midi_outputs != current_items:
+        current_items = list(
+            set(
+                [
+                    midi_output_combobox.itemText(index)
+                    for index in range(midi_output_combobox.count())
+                ]
+            )
+        )
+        if midi_outputs != current_items:
             midi_output_combobox.clear()
             midi_output_combobox.addItems(midi_outputs)
             midi_output_combobox.setCurrentText(settings["port_name"])
-        else :
+        else:
             pass
         return midi_outputs
 
@@ -436,7 +439,6 @@ class EditProfileWindow(QDialog):
         window.show()
 
 
-
 class EditSettingsWindow(QDialog):
     def __init__(self, profile_data):
         super(EditSettingsWindow, self).__init__()
@@ -445,7 +447,7 @@ class EditSettingsWindow(QDialog):
 
         self.setWindowTitle("Edit Settings")
         self.setGeometry(100, 100, 600, 400)
-        
+
         self.settings_data = load_settings()
 
         # Create a text area to display JSON content
@@ -469,7 +471,9 @@ class EditSettingsWindow(QDialog):
             self.settings_data.update(new_settings_data)
 
             # Save the changes to the settings file
-            with open(os.path.join(script_directory, "settings.json"), "w") as settings_file:
+            with open(
+                os.path.join(script_directory, "settings.json"), "w"
+            ) as settings_file:
                 json.dump(self.settings_data, settings_file, indent=4)
             logging.info("Saved settings")
 
@@ -528,7 +532,7 @@ def send_midi_message(pc_number, cc_number, cc_value):
                 value=cc_value,
             )
             output_port.send(cc_message)
-            status_message += (f"Control: {cc_number} Value: {cc_value}")
+            status_message += f"Control: {cc_number} Value: {cc_value}"
         window.update_status_bar(status_message)
     except Exception as e:
         logging.error(f"Unexpected error: {e}")
@@ -557,18 +561,19 @@ def save_channel():
             os.path.join(script_directory, "profiles", settings["profile"]), "w"
         ) as profile_file:
             json.dump(new_profile_data, profile_file, indent=4)
-        window.update_status_bar(f"Midi Channel saved successfully on profile '{settings['profile']}'")
+        window.update_status_bar(
+            f"Midi Channel saved successfully on profile '{settings['profile']}'"
+        )
         logging.info(f"Saved {settings['profile']}")
     except Exception as e:
         logging.error(f"Error saving profile data: {e}")
-        QMessageBox.warning(
-            None, "Save Error", f"Error saving profile data: {e}"
-        )
+        QMessageBox.warning(None, "Save Error", f"Error saving profile data: {e}")
+
 
 def save_settings(profile_name=None):
     try:
         if profile_name is not None or profile_name is not False:
-            settings["profile"]= profile_name
+            settings["profile"] = profile_name
             with open(
                 os.path.join(script_directory, "settings.json"), "w"
             ) as settings_file:
@@ -586,40 +591,39 @@ def save_settings(profile_name=None):
         # logging.info(f"Saved {settings['profile']}")
     except Exception as e:
         logging.error(f"Error saving settings: {e}")
-        QMessageBox.warning(
-            None, "Save Error", f"Error saving settings: {e}"
-        )
+        QMessageBox.warning(None, "Save Error", f"Error saving settings: {e}")
 
 
-def change_profile():
+def change_profile(selected_file=None):
     global window, profile_data
-    options = QFileDialog.Options()
-    options |= QFileDialog.DontUseNativeDialog
-    file_dialog = QFileDialog()
-    file_dialog.setFileMode(QFileDialog.ExistingFile)
-    file_dialog.setNameFilter("JSON files (*.json)")
-    file_dialog.setDirectory(os.path.join(script_directory, "profiles"))
-    file_dialog.setWindowTitle("Select Profile JSON File")
+    if selected_file is None:
+        options = QFileDialog.Options()
+        options |= QFileDialog.DontUseNativeDialog
+        file_dialog = QFileDialog()
+        file_dialog.setFileMode(QFileDialog.ExistingFile)
+        file_dialog.setNameFilter("JSON files (*.json)")
+        file_dialog.setDirectory(os.path.join(script_directory, "profiles"))
+        file_dialog.setWindowTitle("Select Profile JSON File")
+        if file_dialog.exec_():
+            selected_file = file_dialog.selectedFiles()[0]
 
     settings = load_settings()
-    if file_dialog.exec_():
-        selected_file = file_dialog.selectedFiles()[0]
-        new_profile_name = os.path.basename(selected_file)
+    new_profile_name = os.path.basename(selected_file)
 
-        # Load the new profile data
-        new_profile_data = load_profile_data(new_profile_name)
+    # Load the new profile data
+    new_profile_data = load_profile_data(new_profile_name)
 
-        # Update the settings and profile_data
-        settings["profile"] = new_profile_name
-        profile_data = new_profile_data
+    # Update the settings and profile_data
+    settings["profile"] = new_profile_name
+    profile_data = new_profile_data
 
-        save_settings(os.path.basename(selected_file))  # Save the changes to settings.json
+    save_settings(os.path.basename(selected_file))  # Save the changes to settings.json
 
-        window.close()
-        window = MainWindow(profile_data, settings)
-        window.setWindowTitle(profile_data["name"])
-        window.update_status_bar("Profile loaded successfully")
-        window.show()
+    window.close()
+    window = MainWindow(profile_data, settings)
+    window.setWindowTitle(profile_data["name"])
+    window.update_status_bar("Profile loaded successfully")
+    window.show()
 
 
 def main():
@@ -643,14 +647,12 @@ def main():
     port_name = settings["port_name"]
     output_port = None
 
-    
-
     for port in mido.get_output_names():
         if port_name in port:
             output_port = mido.open_output(port)
             break
     if not output_port:
-        #window.update_status_bar(f"Error: MIDI port '{port_name}' not found.")
+        # window.update_status_bar(f"Error: MIDI port '{port_name}' not found.")
         logging.error(f"Error: MIDI port '{port_name}' not found.")
 
     window = MainWindow(profile_data, settings)
@@ -666,7 +668,6 @@ def main():
 
     app.aboutToQuit.connect(cleanup)
     sys.exit(app.exec_())
-
 
 
 if __name__ == "__main__":
