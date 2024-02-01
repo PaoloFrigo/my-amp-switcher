@@ -130,9 +130,10 @@ class MainWindow(QMainWindow):
         help_menu.addAction(about_action)
 
         # MIDI Output ComboBox
+        midi_outputs = self.reload_midi_output()
         midi_output_label = QLabel("MIDI Output:")
         midi_output_combobox = QComboBox()
-        midi_output_combobox.addItems(mido.get_output_names())
+        midi_output_combobox.addItems(midi_outputs)
         midi_output_combobox.setCurrentText(settings["port_name"])
         midi_output_combobox.currentIndexChanged.connect(select_midi_output)
 
@@ -333,6 +334,9 @@ class MainWindow(QMainWindow):
         selected_channel = midi_channel_combobox.itemText(index)
         profile["channel"] = int(selected_channel)
 
+    def reload_midi_output(self):
+        midi_outputs = mido.get_output_names()
+        return midi_outputs
 
     def show_about_dialog(self):
         about_text = f"""<h2>MyAmpSwitcher v{__version__}</h2>
@@ -418,6 +422,7 @@ class EditProfileWindow(QDialog):
         window.update_status_bar(f"Profile saved successfully")
 
         window.show()
+
 
 
 class EditSettingsWindow(QDialog):
@@ -626,14 +631,19 @@ def main():
     port_name = settings["port_name"]
     output_port = None
 
+    
+
     for port in mido.get_output_names():
         if port_name in port:
             output_port = mido.open_output(port)
             break
     if not output_port:
+        #window.update_status_bar(f"Error: MIDI port '{port_name}' not found.")
         logging.error(f"Error: MIDI port '{port_name}' not found.")
 
     window = MainWindow(profile_data, settings)
+    if len(mido.get_output_names()) == 0:
+        window.update_status_bar(f"No MIDI output found.")
     window.setWindowTitle(profile_data["name"])
     window.show()
 
