@@ -24,12 +24,11 @@ This is a sample of the [settings.json](./settings.json):
 ```json
 {
     "port_name": "USB MIDI CABLE",
-    "profile": "test1.json",
-    "icon": "icon.icns",
-    "channel": 0,
+    "profile": "n-audio-8X7.json",
+    "icon": "icon.ico",
     "font": "Arial",
-    "size": 16,
-    "buttons_per_row": 4
+    "size": 14,
+    "buttons_per_row": 3
 }
 ```
 
