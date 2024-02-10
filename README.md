@@ -96,6 +96,21 @@ To run the MyAmpSwitcher application, follow these steps:
     python3 MyAmpSwitcher.py
     ```
 
+## User Interface Notes
+The application has 2 main configuration files. "Settings" (settings.json) for visualization preferences and defaults and profiles (individually saved under the profiles folder) specific to the functions they are designed to perform.
+
+This is the layout of the app:
+![Gui](./media/gui_sections.png)
+1. The window title is set to the profile name loaded.
+2. The file menu allows users to manage profiles under 'Profiles', general 'Settings' and review the current version in use the 'About' section.
+Toolbar section
+3. Dropdown with available and showing the MIDI Output currently selected.
+4. Refresh button to reload all availabile MIDI Outputs (in case they have changed since the app startup)
+5. Dropdown of Midi Channel and showing what is selected in the loaded profile.
+The "Save" button will write any change applied to the dropbox in the toolbar to the settings (Midi Output) and profile (Channel) files.
+6. All Button's labels and MIDI messages are defined in the profile, instead text size and number of buttons for each row are defined in the settings.
+7. Status bar displays MIDI Messages and user notifications.
+
 ## Usage
 * Please make sure you connect the your midi interface before opening My-Amp-Swticher.
 
