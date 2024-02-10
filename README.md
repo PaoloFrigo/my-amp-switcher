@@ -71,10 +71,13 @@ Each profile should be saved with a meaningful ```"name"``` field, when loaded t
 
 ## Installation from the DMG file
 
-Download the latest release as dmg file from the GitHub repository.
-After mounting the image the script will present the application window. Select the MyAmpSwitcher icon and drag it over the Application window as shown below:
-#[App Install](./media/install.png)
-From this moment on MyAmpSwitcher will be availabe on your applications.
+Download the latest release as dmg file from the GitHub repository for your platfrom.
+
+After mounting the image the following window will appear.
+![App Install](./media/install.png)
+
+Select the MyAmpSwitcher icon and drag it over the Application window to complete the installation.
+.
 
 ## Uninstalling the MyAmpSwitcher App
 Open Finder. Select the MyAmpSwitcher App and move it to bin.
