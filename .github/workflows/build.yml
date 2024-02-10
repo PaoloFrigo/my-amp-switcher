@@ -1,4 +1,4 @@
-name: Build macOS (INTEL and ARM) and Release
+name: Build macOS (Latest) and Release
 
 on:
   push:
@@ -11,11 +11,7 @@ on:
 
 jobs:
   build:
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        os: [macos-latest]
-        arch: [intel, arm]
+    runs-on: macos-latest
 
     steps:
     - name: Checkout repository
@@ -35,45 +31,18 @@ jobs:
     - name: Build macOS app
       id: build
       run: |
-        if [[ "${{ matrix.arch }}" == "intel" ]]; then
-          pyinstaller --name 'MyAmpSwitcher' \
-                      --icon 'icon.icns' \
-                      --noconsole  \
-                      --windowed  \
-                      --add-data './settings.json:.' \
-                      --add-data './icon.icns:.' \
-                      --add-data './profiles/*:profiles' \
-                      --additional-hooks-dir='./' \
-                      --hidden-import mido.backends.rtmidi \
-                      --hidden-import pyqt5 \
-                      MyAmpSwitcher.py
-        elif [[ "${{ matrix.arch }}" == "arm" ]]; then
-          # Add commands for building for Apple Silicon
-          # You might need to adjust the pyinstaller options accordingly
-          echo "Building for Apple Silicon"
-        fi
+        pyinstaller --name 'MyAmpSwitcher' \
+                    --icon 'icon.icns' \
+                    --noconsole  \
+                    --windowed  \
+                    --add-data './settings.json:.' \
+                    --add-data './icon.icns:.' \
+                    --add-data './profiles/*:profiles' \
+                    --additional-hooks-dir='./' \
+                    --hidden-import mido.backends.rtmidi \
+                    --hidden-import pyqt5 \
+                    MyAmpSwitcher.py
 
-    - name: Upload macOS app artifact
-      if: success() # Only upload the artifact if the build job is successful
-      uses: actions/upload-artifact@v2
-      with:
-        name: MyAmpSwitcher_macOS_app_${{ matrix.arch }}
-        path: dist
-
-  create-dmg:
-    needs: build
-    runs-on: macos-latest
-    steps:
-    - name: Checkout repository
-      uses: actions/checkout@v2
-
-    - name: Download macOS app artifact
-      uses: actions/download-artifact@v2
-      with:
-        name: MyAmpSwitcher_macOS_app_${{ matrix.arch }}
-
-    - name: Create DMG
-      run: |
         mkdir -p dist/dmg
         cp -r "dist/MyAmpSwitcher.app" dist/dmg
 
@@ -92,7 +61,7 @@ jobs:
     - name: Upload macOS artifact
       uses: actions/upload-artifact@v2
       with:
-        name: MyAmpSwitcher_macOS_${{ matrix.arch }}
+        name: MyAmpSwitcher_macOS_latest
         path: dist
 
   cleanup:
@@ -101,10 +70,10 @@ jobs:
       - name: Download macOS artifacts
         uses: actions/download-artifact@v2
         with:
-          name: MyAmpSwitcher_macOS_*
+          name: MyAmpSwitcher_macOS_latest
 
       - name: Remove old macOS artifacts
         run: |
-          if [ -f dist/MyAmpSwitcher_macOS.zip ]; then
-            ls -1 | grep '_macOS.zip$' | sort -r | tail -n +3 | xargs rm -rf
+          if [ -f dist/MyAmpSwitcher_macOS_latest.zip ]; then
+            ls -1 | grep '_macOS_latest.zip$' | sort -r | tail -n +3 | xargs rm -rf
           fi
