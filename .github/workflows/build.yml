@@ -54,7 +54,7 @@ jobs:
         fi
 
     - name: Upload macOS app artifact
-      if: always() # Always upload the app artifact, even if the build job fails
+      if: success() # Only upload the artifact if the build job is successful
       uses: actions/upload-artifact@v2
       with:
         name: MyAmpSwitcher_macOS_app_${{ matrix.arch }}
