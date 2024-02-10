@@ -80,18 +80,25 @@ To run the MyAmpSwitcher application, follow these steps:
    ```
 
 2. Create a virtual environment and activate it
+   on macos/linux
     ```bash
     cd my-amp-switcher
     python3 -m venv .venv
     source .venv/bin/activate
     ```
+   on windows
+   ```powershell
+    cd my-amp-switcher
+    python3 -m venv .venv
+    .venv\bin\activate
+    ```
 
-3. Installing the dependencies
+4. Installing the dependencies
     ```bash
     pip install -r requirements.txt
     ```
 
-4. Running the app.
+5. Running the app.
     ```
     python3 MyAmpSwitcher.py
     ```
