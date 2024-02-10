@@ -28,6 +28,10 @@ jobs:
         pip install -r requirements.txt
         pip install pyinstaller
 
+    - name: Install create-dmg
+      run: |
+        npm install -g create-dmg
+
     - name: Build macOS app
       id: build
       run: |
