@@ -114,7 +114,7 @@ This is the layout of the app:
    
 Toolbar 
 
-4. Dropdown with available and showing the MIDI Output currently selected.
+4. Dropdown with all available options and showing the MIDI Output currently selected.
 5. Refresh button to reload all available MIDI Outputs (in case they have changed since the app startup)
 6. Dropdown of Midi Channel and showing what is selected in the loaded profile.
    
