@@ -113,13 +113,15 @@ This is the layout of the app:
 2. The file menu allows users to manage profiles under 'Profiles', general 'Settings', and review the current version using the 'About' section.
    
 Toolbar 
+
 4. Dropdown with available and showing the MIDI Output currently selected.
 5. Refresh button to reload all available MIDI Outputs (in case they have changed since the app startup)
 6. Dropdown of Midi Channel and showing what is selected in the loaded profile.
+   
 The "Save" button will write any change applied to the dropdown in the toolbar to the settings (Midi Output) and profile (Channel) files.
 
-7. All Button labels and MIDI messages are defined in the profile, instead text size and the number of buttons for each row are defined in the settings.
-8. The status bar displays MIDI Messages and user notifications.
+8. All Button labels and MIDI messages are defined in the profile, instead text size and the number of buttons for each row are defined in the settings.
+9. The status bar displays MIDI Messages and user notifications.
 
 ## Usage
 * Please make sure you connect your MIDI interface before opening My-Amp-Swticher.
