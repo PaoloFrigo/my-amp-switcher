@@ -33,6 +33,7 @@ jobs:
         pip install pyinstaller
 
     - name: Build macOS app
+      id: build
       run: |
         if [[ "${{ matrix.arch }}" == "intel" ]]; then
           pyinstaller --name 'MyAmpSwitcher' \
@@ -51,6 +52,25 @@ jobs:
           # You might need to adjust the pyinstaller options accordingly
           echo "Building for Apple Silicon"
         fi
+
+    - name: Upload macOS app artifact
+      if: always() # Always upload the app artifact, even if the build job fails
+      uses: actions/upload-artifact@v2
+      with:
+        name: MyAmpSwitcher_macOS_app_${{ matrix.arch }}
+        path: dist
+
+  create-dmg:
+    needs: build
+    runs-on: macos-latest
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Download macOS app artifact
+      uses: actions/download-artifact@v2
+      with:
+        name: MyAmpSwitcher_macOS_app_${{ matrix.arch }}
 
     - name: Create DMG
       run: |
