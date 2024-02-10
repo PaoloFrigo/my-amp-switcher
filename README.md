@@ -80,6 +80,7 @@ To run the MyAmpSwitcher application, follow these steps:
    ```
 
 2. Create a virtual environment and activate it
+
    on macos/linux
     ```bash
     cd my-amp-switcher
