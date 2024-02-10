@@ -69,6 +69,16 @@ This is a profile for a Brunetti XL" R-EVO:
 ## Profile Notes
 Each profile should be saved with a meaningful ```"name"``` field, when loaded the name will appear as the window's title. Each button should have ```"name"``` have a ```"program_change"``` and/or ```"cc_number" ```and ```"cc_value"```.
 
+## Installation from the DMG file
+
+Download the latest release as dmg file from the GitHub repository.
+After mounting the image the script will present the application window. Select the MyAmpSwitcher icon and drag it over the Application window as shown below:
+#[App Install](./media/install.png)
+From this moment on MyAmpSwitcher will be availabe on your applications.
+
+## Uninstalling the MyAmpSwitcher App
+Open Finder. Select the MyAmpSwitcher App and move it to bin.
+
 ## Installation instruction from GitHub
 
 To run the MyAmpSwitcher application, follow these steps:
