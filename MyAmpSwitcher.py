@@ -48,8 +48,8 @@ def ensure_directories_exist():
         os.makedirs(profiles_directory)
 
 
-def load_settings():
-    settings_file_path = os.path.join(script_directory, "settings.json")
+def load_settings(script_directory=script_directory,settings_filename="settings.json"):
+    settings_file_path = os.path.join(script_directory, settings_filename)
     default_settings = {
         "port_name": "",
         "channel": 0,
@@ -132,47 +132,43 @@ class MainWindow(QMainWindow):
 
         # MIDI Output ComboBox
         midi_output_label = QLabel("MIDI Output:")
-        global midi_output_combobox
-        midi_output_combobox = QComboBox()
+        self.midi_output_combobox = QComboBox()
         midi_outputs = self.reload_midi_output()
-        # midi_output_combobox.addItems(midi_outputs)
-        # midi_output_combobox.setCurrentText(settings["port_name"])
-        midi_output_combobox.currentIndexChanged.connect(select_midi_output)
+        self.midi_output_combobox.currentIndexChanged.connect(self.select_midi_output)
 
         refresh_midi_button = QPushButton("Refresh")
         refresh_midi_button.clicked.connect(self.reload_midi_output)
 
         # MIDI Channel ComboBox
-        global midi_channel_combobox
         midi_channel_label = QLabel("Channel:")
-        midi_channel_combobox = QComboBox()
-        midi_channel_combobox.addItems(map(str, range(128)))  # Adding values 0 to 127
-        midi_channel_combobox.setCurrentText(str(profile_data.get("channel", 0)))
-        midi_channel_combobox.currentIndexChanged.connect(self.select_midi_channel)
+        self.midi_channel_combobox = QComboBox()
+        self.midi_channel_combobox.addItems(map(str, range(128)))  # Adding values 0 to 127
+        self.midi_channel_combobox.setCurrentText(str(profile_data.get("channel", 0)))
+        self.midi_channel_combobox.currentIndexChanged.connect(self.select_midi_channel)
 
         # Save Button
         save_button = QPushButton("Save")
-        save_button.clicked.connect(save_channel)
+        save_button.clicked.connect(self.save_channel)
 
         # Create a horizontal layout for MIDI output, channel, save, and profile change buttons
-        midi_layout = QHBoxLayout()
-        midi_layout.addWidget(midi_output_label)
-        midi_layout.addWidget(midi_output_combobox)
-        midi_layout.addWidget(refresh_midi_button)
-        midi_layout.addWidget(midi_channel_label)
-        midi_layout.addWidget(midi_channel_combobox)
-        midi_layout.addWidget(save_button)
+        self.midi_layout = QHBoxLayout()
+        self.midi_layout.addWidget(midi_output_label)
+        self.midi_layout.addWidget(self.midi_output_combobox)
+        self.midi_layout.addWidget(refresh_midi_button)
+        self.midi_layout.addWidget(midi_channel_label)
+        self.midi_layout.addWidget(self.midi_channel_combobox)
+        self.midi_layout.addWidget(save_button)
 
         central_widget = QWidget(self)
         central_layout = QVBoxLayout(central_widget)
-        central_layout.addLayout(midi_layout)
+        central_layout.addLayout(self.midi_layout)
 
         sorted_buttons = sorted(
             profile_data.get("buttons", []), key=lambda x: x.get("order", 0)
         )
 
         # Create a grid layout for channel buttons
-        channel_buttons_layout = QGridLayout()
+        self.channel_buttons_layout = QGridLayout()
 
         for idx, button_info in enumerate(sorted_buttons):
             pc_number = button_info.get("program_change", None)
@@ -194,9 +190,9 @@ class MainWindow(QMainWindow):
 
             # Calculate row and column indices
             row, col = divmod(idx, settings["buttons_per_row"])
-            channel_buttons_layout.addWidget(button, row, col)
+            self.channel_buttons_layout.addWidget(button, row, col)
 
-        central_layout.addLayout(channel_buttons_layout)
+        central_layout.addLayout(self.channel_buttons_layout)
 
         self.setCentralWidget(central_widget)
 
@@ -213,8 +209,109 @@ class MainWindow(QMainWindow):
         app_icon = QIcon(os.path.join(script_directory, settings["icon"]))
         self.setWindowIcon(app_icon)
 
+    def save_channel(self):
+        try:
+            if profile_data:
+                new_profile_data = profile_data.copy()
+                new_profile_data["channel"] = int(self.midi_channel_combobox.currentText())
+
+            with open(
+                os.path.join(script_directory, "profiles", settings["profile"]), "w"
+            ) as profile_file:
+                json.dump(new_profile_data, profile_file, indent=4)
+            window.update_status_bar(
+                f"Midi Channel saved successfully on profile '{settings['profile']}'"
+            )
+            logging.info(f"Saved {settings['profile']}")
+        except Exception as e:
+            logging.error(f"Error saving profile data: {e}")
+            QMessageBox.warning(None, "Save Error", f"Error saving profile data: {e}")
+
     def update_status_bar(self, message, timeout=2000):
         self.statusBar.showMessage(message, timeout)
+    
+    def update_midi_channel_combobox(self, new_channel):
+        current_index = self.midi_channel_combobox.findText(str(new_channel))
+        if current_index != -1:
+            self.midi_channel_combobox.setCurrentIndex(current_index)
+
+
+    def update_buttons_layout(self, sorted_buttons):
+        for button in self.findChildren(QPushButton):
+            button.deleteLater()
+
+        for idx, button_info in enumerate(sorted_buttons):
+            pc_number = button_info.get("program_change", None)
+            cc_number = button_info.get("cc_number", None)
+            cc_value = button_info.get("cc_value", None)
+            name = button_info.get("name", "Unknown")
+            button = QPushButton(name)
+            button.setMinimumHeight(40)
+            button.setFont(QFont(self.settings["font"], self.settings["size"]))
+            button.clicked.connect(
+                lambda _, pc=pc_number, cc_num=cc_number, cc_val=cc_value: send_midi_message(
+                    pc, cc_num, cc_val
+                )
+            )
+
+            row, col = divmod(idx, self.settings["buttons_per_row"])
+            self.channel_buttons_layout.addWidget(button, row, col)
+            
+    def update_content(self, new_profile_data, new_settings):
+        self.profile_data = new_profile_data
+        self.settings = new_settings
+
+        self.setWindowTitle(self.profile_data["name"])
+
+        # Update MIDI channel ComboBox
+        self.update_midi_channel_combobox(self.profile_data.get("channel", 0))
+
+        # Update buttons layout
+        self.update_buttons_layout(
+            sorted(self.profile_data.get("buttons", []), key=lambda x: x.get("order", 0))
+        )
+
+        # Clear existing widgets in the MIDI layout
+        while self.midi_layout.count():
+            item = self.midi_layout.takeAt(0)
+            if item.widget():
+                item.widget().deleteLater()
+
+        # MIDI Output ComboBox
+        midi_output_label = QLabel("MIDI Output:")
+        midi_outputs = self.reload_midi_output()
+        self.midi_output_combobox.setCurrentIndex(0)  # Set default selection
+        self.midi_output_combobox.currentIndexChanged.connect(self.select_midi_output)
+
+        refresh_midi_button = QPushButton("Refresh")
+        refresh_midi_button.clicked.connect(self.reload_midi_output)
+
+        # MIDI Channel ComboBox
+        midi_channel_label = QLabel("Channel:")
+        self.midi_channel_combobox = QComboBox()
+        self.midi_channel_combobox.addItems(map(str, range(128)))  # Adding values 0 to 127
+        self.midi_channel_combobox.setCurrentText(str(self.profile_data.get("channel", 0)))
+        self.midi_channel_combobox.currentIndexChanged.connect(self.select_midi_channel)
+
+        # Save Button
+        save_button = QPushButton("Save")
+        save_button.clicked.connect(self.save_channel)
+
+        # Add widgets to the MIDI layout
+        self.midi_layout.addWidget(midi_output_label)
+        self.midi_layout.addWidget(self.midi_output_combobox)
+        self.midi_layout.addWidget(refresh_midi_button)
+        self.midi_layout.addWidget(midi_channel_label)
+        self.midi_layout.addWidget(self.midi_channel_combobox)
+        self.midi_layout.addWidget(save_button)
+
+        # Update status bar
+        self.update_status_bar("Settings saved successfully")
+
+        # Show the updated content
+        self.show()
+
+
 
     def new_profile(self):
         template_json = {
@@ -254,7 +351,7 @@ class MainWindow(QMainWindow):
             global profile_data
             profile_data = new_profile_data
 
-            save_settings()  # Save the changes to settings.json
+            save_settings(channel=int(self.midi_channel_combobox.currentText()))  # Save the changes to settings.json
 
             # Reload the main window with the new profile data
             self.setWindowTitle(
@@ -270,11 +367,11 @@ class MainWindow(QMainWindow):
             self.show()
 
     def edit_profile(self):
-        edit_profile_window = EditProfileWindow(profile_data)
+        edit_profile_window = EditProfileWindow(profile_data, self,script_directory)
         edit_profile_window.exec_()
 
     def edit_settings(self):
-        edit_settings__window = EditSettingsWindow(profile_data)
+        edit_settings__window = EditSettingsWindow(profile_data,self,script_directory)
         edit_settings__window.exec_()
 
     def load_profile(self):
@@ -332,7 +429,7 @@ class MainWindow(QMainWindow):
     def select_midi_channel(self, index):
         profile = profile_data
 
-        selected_channel = midi_channel_combobox.itemText(index)
+        selected_channel = self.midi_channel_combobox.itemText(index)
         profile["channel"] = int(selected_channel)
 
     def reload_midi_output(self):
@@ -340,15 +437,15 @@ class MainWindow(QMainWindow):
         current_items = list(
             set(
                 [
-                    midi_output_combobox.itemText(index)
-                    for index in range(midi_output_combobox.count())
+                    self.midi_output_combobox.itemText(index)
+                    for index in range(self.midi_output_combobox.count())
                 ]
             )
         )
         if midi_outputs != current_items:
-            midi_output_combobox.clear()
-            midi_output_combobox.addItems(midi_outputs)
-            midi_output_combobox.setCurrentText(settings["port_name"])
+            self.midi_output_combobox.clear()
+            self.midi_output_combobox.addItems(midi_outputs)
+            self.midi_output_combobox.setCurrentText(settings["port_name"])
         else:
             pass
         return midi_outputs
@@ -386,113 +483,17 @@ class MainWindow(QMainWindow):
 
         about_dialog.exec_()
 
-
-class EditProfileWindow(QDialog):
-    def __init__(self, profile_data):
-        super(EditProfileWindow, self).__init__()
-
-        self.profile_data = profile_data
-
-        self.setWindowTitle("Edit Profile")
-        self.setGeometry(100, 100, 600, 400)
-
-        # Create a text area to display JSON content
-        self.json_text = QTextEdit(self)
-        self.json_text.setPlainText(json.dumps(profile_data, indent=4))
-
-        # Save Button
-        save_button = QPushButton("Save", self)
-        save_button.clicked.connect(self.save_and_close)
-
-        layout = QVBoxLayout()
-        layout.addWidget(self.json_text)
-        layout.addWidget(save_button)
-
-        self.setLayout(layout)
-
-    def save_and_close(self):
-        # Update profile_data based on user modifications
+    def select_midi_output(self,index):
+        selected_port = self.midi_output_combobox.itemText(index)
+        settings["port_name"] = selected_port
+        global output_port
+        if output_port is not None:
+            output_port.close()
         try:
-            new_profile_data = json.loads(self.json_text.toPlainText())
-            profile_data.update(new_profile_data)
-
-            # Save the changes to the profile file
-            with open(
-                os.path.join(script_directory, "profiles", settings["profile"]), "w"
-            ) as profile_file:
-                json.dump(profile_data, profile_file, indent=4)
-            logging.info(f"Saved {settings['profile']}")
-
-            self.accept()  # Close the window
-            self.reload_main_window()  # Reload the main window with the updated profile data
-        except json.JSONDecodeError as e:
-            QMessageBox.warning(self, "Invalid JSON", f"Error in JSON format: {e}")
-
-    def reload_main_window(self):
-        global window
-        window.close()
-        settings = load_settings()
-        window = MainWindow(profile_data, settings)
-        window.setWindowTitle(profile_data["name"])
-        window.update_status_bar(f"Profile saved successfully")
-
-        window.show()
-
-
-class EditSettingsWindow(QDialog):
-    def __init__(self, profile_data):
-        super(EditSettingsWindow, self).__init__()
-
-        self.profile_data = profile_data
-
-        self.setWindowTitle("Edit Settings")
-        self.setGeometry(100, 100, 600, 400)
-
-        self.settings_data = load_settings()
-
-        # Create a text area to display JSON content
-        self.json_text = QTextEdit(self)
-        self.json_text.setPlainText(json.dumps(self.settings_data, indent=4))
-
-        # Save Button
-        save_button = QPushButton("Save", self)
-        save_button.clicked.connect(self.save_and_close)
-
-        layout = QVBoxLayout()
-        layout.addWidget(self.json_text)
-        layout.addWidget(save_button)
-
-        self.setLayout(layout)
-
-    def save_and_close(self):
-        # Update settings_data based on user modifications
-        try:
-            new_settings_data = json.loads(self.json_text.toPlainText())
-            self.settings_data.update(new_settings_data)
-
-            # Save the changes to the settings file
-            with open(
-                os.path.join(script_directory, "settings.json"), "w"
-            ) as settings_file:
-                json.dump(self.settings_data, settings_file, indent=4)
-            logging.info("Saved settings")
-
-            self.accept()  # Close the window
-            # Close the current instance of the app
-            # Close the current instance of the app
-            self.reload_main_window()
-
-        except json.JSONDecodeError as e:
-            QMessageBox.warning(self, "Invalid JSON", f"Error in JSON format: {e}")
-
-    def reload_main_window(self):
-        global window
-        window.close()
-        settings = load_settings()
-        window = MainWindow(profile_data, settings)
-        window.setWindowTitle(profile_data["name"])
-        window.update_status_bar("Settings saved successfully")
-        window.show()
+            output_port = mido.open_output(selected_port)
+        except Exception as e:
+            logging.error(f"Error opening MIDI port: {e}")
+            QMessageBox.warning(None, "MIDI Output Error", f"Error opening MIDI port: {e}")
 
 
 def load_settings():
@@ -538,39 +539,10 @@ def send_midi_message(pc_number, cc_number, cc_value):
         logging.error(f"Unexpected error: {e}")
 
 
-def select_midi_output(index):
-    selected_port = midi_output_combobox.itemText(index)
-    settings["port_name"] = selected_port
-    global output_port
-    if output_port is not None:
-        output_port.close()
-    try:
-        output_port = mido.open_output(selected_port)
-    except Exception as e:
-        logging.error(f"Error opening MIDI port: {e}")
-        QMessageBox.warning(None, "MIDI Output Error", f"Error opening MIDI port: {e}")
 
 
-def save_channel():
-    try:
-        if profile_data:
-            new_profile_data = profile_data.copy()
-            new_profile_data["channel"] = int(midi_channel_combobox.currentText())
 
-        with open(
-            os.path.join(script_directory, "profiles", settings["profile"]), "w"
-        ) as profile_file:
-            json.dump(new_profile_data, profile_file, indent=4)
-        window.update_status_bar(
-            f"Midi Channel saved successfully on profile '{settings['profile']}'"
-        )
-        logging.info(f"Saved {settings['profile']}")
-    except Exception as e:
-        logging.error(f"Error saving profile data: {e}")
-        QMessageBox.warning(None, "Save Error", f"Error saving profile data: {e}")
-
-
-def save_settings(profile_name=None):
+def save_settings(profile_name=None,channel=0):
     try:
         if profile_name is not None or profile_name is not False:
             settings["profile"] = profile_name
@@ -582,13 +554,8 @@ def save_settings(profile_name=None):
 
         if profile_data:
             new_profile_data = profile_data.copy()
-            new_profile_data["channel"] = int(midi_channel_combobox.currentText())
+            new_profile_data["channel"] = channel 
 
-        # with open(
-        #     os.path.join(script_directory, "profiles", settings["profile"]), "w"
-        # ) as profile_file:
-        #     json.dump(new_profile_data, profile_file, indent=4)
-        # logging.info(f"Saved {settings['profile']}")
     except Exception as e:
         logging.error(f"Error saving settings: {e}")
         QMessageBox.warning(None, "Save Error", f"Error saving settings: {e}")
@@ -596,6 +563,7 @@ def save_settings(profile_name=None):
 
 def change_profile(selected_file=None):
     global window, profile_data
+    #Importing the profile
     if selected_file is None:
         options = QFileDialog.Options()
         options |= QFileDialog.DontUseNativeDialog
@@ -617,13 +585,129 @@ def change_profile(selected_file=None):
     settings["profile"] = new_profile_name
     profile_data = new_profile_data
 
-    save_settings(os.path.basename(selected_file))  # Save the changes to settings.json
+    save_settings(os.path.basename(selected_file),profile_data["channel"])  # Save the changes to settings.json
 
-    window.close()
-    window = MainWindow(profile_data, settings)
-    window.setWindowTitle(profile_data["name"])
-    window.update_status_bar("Profile loaded successfully")
-    window.show()
+    window.update_content(new_profile_data, settings)
+    window.update_status_bar(f"Profile loaded")
+
+class EditProfileWindow(QDialog):
+    def __init__(self, profile_data, main_window, script_directory):
+        super(EditProfileWindow, self).__init__()
+
+        self.setting_filename = "settings.json"
+        self.profile_data = profile_data
+        self.main_window = main_window
+        self.script_directory = script_directory
+
+        self.settings = self.load_settings()
+
+        self.setWindowTitle("Edit Profile")
+        self.setGeometry(100, 100, 600, 400)
+
+        # Create a text area to display JSON content
+        self.json_text = QTextEdit(self)
+        self.json_text.setPlainText(json.dumps(profile_data, indent=4))
+
+        # Save Button
+        save_button = QPushButton("Save", self)
+        save_button.clicked.connect(self.save_and_close)
+
+        layout = QVBoxLayout()
+        layout.addWidget(self.json_text)
+        layout.addWidget(save_button)
+
+        self.setLayout(layout)
+
+    def save_and_close(self):
+        # Update profile_data based on user modifications
+        try:
+            new_profile_data = json.loads(self.json_text.toPlainText())
+            self.profile_data.update(new_profile_data)
+
+            # Save the changes to the profile file
+            with open(
+                os.path.join(self.script_directory, "profiles", self.settings["profile"]), "w"
+            ) as profile_file:
+                json.dump(self.profile_data, profile_file, indent=4)
+            logging.info(f"Saved {self.settings['profile']}")
+
+            self.accept()  # Close the window
+            self.reload_main_window()  # Reload the main window with the updated profile data
+        except json.JSONDecodeError as e:
+            QMessageBox.warning(self, "Invalid JSON", f"Error in JSON format: {e}")
+
+    def reload_main_window(self):
+        # Call the update_content method of the existing main window
+        self.main_window.update_content(self.profile_data, self.settings)
+        self.main_window.update_status_bar(f"Profile saved successfully")
+
+        self.accept()  
+
+    def load_settings(self):
+        with open(os.path.join(self.script_directory, self.setting_filename)) as settings_file:
+            return json.load(settings_file)
+        
+class EditSettingsWindow(QDialog):
+    def __init__(self, profile_data, main_window,script_directory):
+        super(EditSettingsWindow, self).__init__()
+
+        self.setting_filename = "settings.json"
+        self.profile_data = profile_data
+        self.main_window = main_window
+        self.script_directory = script_directory
+
+        self.setWindowTitle("Edit Settings")
+        self.setGeometry(100, 100, 600, 400)
+
+        self.settings_data = self.load_settings()
+
+        # Create a text area to display JSON content
+        self.json_text = QTextEdit(self)
+        self.json_text.setPlainText(json.dumps(self.settings_data, indent=4))
+
+        # Save Button
+        save_button = QPushButton("Save", self)
+        save_button.clicked.connect(self.save_and_close)
+
+        layout = QVBoxLayout()
+        layout.addWidget(self.json_text)
+        layout.addWidget(save_button)
+
+        self.setLayout(layout)
+
+    def save_and_close(self):
+        # Update settings_data based on user modifications
+        try:
+            new_settings_data = json.loads(self.json_text.toPlainText())
+            self.settings_data.update(new_settings_data)
+
+            # Save the changes to the settings file
+            with open(
+                os.path.join(self.script_directory, self.setting_filename), "w"
+            ) as settings_file:
+                json.dump(self.settings_data, settings_file, indent=4)
+            logging.info("Saved settings")
+
+            self.accept()  # Close the window
+            # Close the current instance of the app
+            self.reload_main_window()
+
+        except json.JSONDecodeError as e:
+            QMessageBox.warning(self, "Invalid JSON", f"Error in JSON format: {e}")
+
+    def reload_main_window(self):
+        new_settings_data = json.loads(self.json_text.toPlainText())
+        new_settings = self.main_window.settings.copy()
+        new_settings.update(new_settings_data)
+
+        # Call the update_content method of the existing main window
+        self.main_window.update_content(self.profile_data, new_settings)
+        self.main_window.update_status_bar(f"Settings saved successfully")
+        self.accept()  
+
+    def load_settings(self):
+        with open(os.path.join(self.script_directory, self.setting_filename)) as settings_file:
+            return json.load(settings_file)
 
 
 def main():
@@ -642,7 +726,7 @@ def main():
         profile_data = load_profile_data(settings["profile"])
     except:
         profile_data = load_profile_data("sample.json")
-        save_settings("sample.json")
+        save_settings("sample.json", profile_data["channel"])
 
     port_name = settings["port_name"]
     output_port = None
