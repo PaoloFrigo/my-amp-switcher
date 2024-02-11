@@ -8,6 +8,7 @@ on:
       - '**/*.json'
       - '**/*.py'
       - '**/*.yml'
+      - '**/*.plist'
 
 jobs:
   build:
@@ -55,7 +56,6 @@ jobs:
                     --additional-hooks-dir='./' \
                     --hidden-import mido.backends.rtmidi \
                     --hidden-import pyqt5 \
-                    --codesign-identity "Paolo Frigo" \
                     --version-file "./Info.plist" \
                     MyAmpSwitcher.py
 

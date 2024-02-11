@@ -3,6 +3,7 @@ import mido
 import logging
 import os
 import shutil
+import plistlib
 import sys
 from PyQt5.QtWidgets import (
     QApplication,
@@ -31,7 +32,17 @@ profile_data = None
 output_port = None
 window = None
 midi_channel_combobox = None
-__version__ = "1.0.0 (BETA)"
+
+# Path to your Info.plist file
+plist_path = os.path.join(script_directory, 'Info.plist')
+
+# Load the Info.plist file
+with open(plist_path, 'rb') as plist_file:
+    plist_data = plistlib.load(plist_file)
+
+# Extract the version information
+__version__ = plist_data.get('CFBundleShortVersionString', 'Unknown')
+
 
 # Configure logging
 log_file_path = os.path.join(script_directory, "MyAmpSwitcher.log")
