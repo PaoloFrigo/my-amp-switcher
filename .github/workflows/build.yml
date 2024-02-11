@@ -32,8 +32,18 @@ jobs:
       run: |
         npm install -g create-dmg
 
+    - name: Generate CFBundleVersion with current date
+      id: generate_version
+      run: |
+        echo "::set-output name=date::$(date +'%Y%m%d')"
+
+    - name: Modify Info.plist with version and date
+      run: |
+        INFO_PLIST="path/to/Info.plist"  # Replace with the actual path to your Info.plist file
+        DATE=$(echo "${{ steps.generate_version.outputs.date }}")
+        plutil -replace CFBundleVersion -string "${DATE}" "${INFO_PLIST}"
+
     - name: Build macOS app
-      id: build
       run: |
         pyinstaller --name 'MyAmpSwitcher' \
                     --icon 'icon.icns' \
@@ -45,6 +55,8 @@ jobs:
                     --additional-hooks-dir='./' \
                     --hidden-import mido.backends.rtmidi \
                     --hidden-import pyqt5 \
+                    --codesign-identity "Paolo Frigo" \
+                    --version-file "path/to/Info.plist" \
                     MyAmpSwitcher.py
 
         mkdir -p dist/dmg
