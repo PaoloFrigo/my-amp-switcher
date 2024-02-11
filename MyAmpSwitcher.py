@@ -295,7 +295,7 @@ class MainWindow(QMainWindow):
         )
 
         # Clear existing widgets in the MIDI layout
-        while self.midi_layout.count():
+        for i in range(1, self.midi_layout.count()):
             item = self.midi_layout.takeAt(0)
             if item.widget():
                 item.widget().deleteLater()
@@ -303,6 +303,7 @@ class MainWindow(QMainWindow):
         # MIDI Output ComboBox
         midi_output_label = QLabel("MIDI Output:")
         self.midi_output_combobox = QComboBox()
+        self.midi_output_combobox.clear()
         midi_outputs = self.reload_midi_output()
         #self.midi_output_combobox.setCurrentIndex(0)  # Set default selection
         self.midi_output_combobox.currentIndexChanged.connect(self.select_midi_output)
@@ -458,12 +459,13 @@ class MainWindow(QMainWindow):
 
     def reload_midi_output(self):
         
-        # Recreate combo box if it's not available
-        if not hasattr(self, 'midi_output_combobox') or not self.midi_output_combobox:
-            self.midi_output_combobox = QComboBox()
-            self.midi_output_combobox.currentIndexChanged.connect(self.select_midi_output)
+        # if not hasattr(self, 'midi_output_combobox') or not self.midi_output_combobox:
+        #     return
+        #     # self.midi_output_combobox = QComboBox()
+        #     # self.midi_output_combobox.currentIndexChanged.connect(self.select_midi_output)
+        
 
-        midi_outputs = mido.get_output_names()
+        midi_outputs =  mido.get_output_names() if  mido.get_output_names() else []
 
         self.midi_output_combobox.clear()
         self.midi_output_combobox.addItems(midi_outputs)
@@ -514,7 +516,8 @@ class MainWindow(QMainWindow):
             output_port = mido.open_output(selected_port)
         except Exception as e:
             logging.error(f"Error opening MIDI port: {e}")
-            QMessageBox.warning(None, "MIDI Output Error", f"Error opening MIDI port: {e}")
+            self.update_status_bar("MIDI Output selected cannot be empty")
+            #QMessageBox.warning(None, "MIDI Output Error", f"Error opening MIDI port: {e}")
 
 
 def load_settings():
