@@ -281,9 +281,11 @@ class MainWindow(QMainWindow):
             self.channel_buttons_layout.addWidget(button, row, col)
             
     def update_content(self, new_profile_data, new_settings):
+        # Update profile data and settings
         self.profile_data = new_profile_data
         self.settings = new_settings
 
+        # Set window title based on the profile name
         self.setWindowTitle(self.profile_data["name"])
 
         # Update MIDI channel ComboBox
@@ -295,21 +297,26 @@ class MainWindow(QMainWindow):
         )
 
         # Clear existing widgets in the MIDI layout
-        for i in range(0, self.midi_layout.count()):
-            item = self.midi_layout.takeAt(0)
-            if item.widget():
-                item.widget().deleteLater()
+        # for i in range(self.midi_layout.count()):
+        #     item = self.midi_layout.takeAt(0)
+        #     if item.widget():
+        #         item.widget().deleteLater()
 
-        # MIDI Output ComboBox
-        midi_output_label = QLabel("MIDI Output:")
-        self.midi_output_combobox = QComboBox()
-        self.midi_output_combobox.clear()
-        midi_outputs = self.reload_midi_output()
-        #self.midi_output_combobox.setCurrentIndex(0)  # Set default selection
-        self.midi_output_combobox.currentIndexChanged.connect(self.select_midi_output)
+        # MIDI Output ComboBox - Check if it already exists before creating a new one
+        if not hasattr(self, 'midi_output_combobox'):
+            midi_output_label = QLabel("MIDI Output:")
+            self.midi_output_combobox = QComboBox()
+            self.midi_output_combobox.clear()
+            midi_outputs = self.reload_midi_output()
+            self.midi_output_combobox.currentIndexChanged.connect(self.select_midi_output)
 
-        refresh_midi_button = QPushButton("Refresh")
-        refresh_midi_button.clicked.connect(self.reload_midi_output)
+            refresh_midi_button = QPushButton("Refresh")
+            refresh_midi_button.clicked.connect(self.reload_midi_output)
+
+            # Add widgets to the MIDI layout
+            self.midi_layout.addWidget(midi_output_label)
+            self.midi_layout.addWidget(self.midi_output_combobox)
+            self.midi_layout.addWidget(refresh_midi_button)
 
         # MIDI Channel ComboBox
         midi_channel_label = QLabel("Channel:")
@@ -323,9 +330,6 @@ class MainWindow(QMainWindow):
         save_button.clicked.connect(self.save_channel)
 
         # Add widgets to the MIDI layout
-        self.midi_layout.addWidget(midi_output_label)
-        self.midi_layout.addWidget(self.midi_output_combobox)
-        self.midi_layout.addWidget(refresh_midi_button)
         self.midi_layout.addWidget(midi_channel_label)
         self.midi_layout.addWidget(self.midi_channel_combobox)
         self.midi_layout.addWidget(save_button)
