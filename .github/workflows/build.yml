@@ -56,7 +56,7 @@ jobs:
                     --hidden-import mido.backends.rtmidi \
                     --hidden-import pyqt5 \
                     --codesign-identity "Paolo Frigo" \
-                    --version-file "path/to/Info.plist" \
+                    --version-file "./Info.plist" \
                     MyAmpSwitcher.py
 
         mkdir -p dist/dmg
