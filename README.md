@@ -82,7 +82,18 @@ After mounting the image the following window will appear.
 ![App Install](./media/install.png)
 
 Select the MyAmpSwitcher icon and drag it over the Application window to complete the installation.
-.
+
+### Warnings when a DMG is not signed.
+When a dmg is not signed macOS will present this warning message:
+![warning1](./media/warning1.png)
+
+Open System Preferences and allow the system to open the app as presented in the picture below:
+![system_pref](./media/system_pref.png)
+
+At last when the app will run the will a final notification for this
+Open System Preferences and allow the system to open the app:
+![system_pref](./media/warning2.png)
+
 
 ## Uninstalling the MyAmpSwitcher App
 Open Finder. Select the MyAmpSwitcher App and move it to the bin.
