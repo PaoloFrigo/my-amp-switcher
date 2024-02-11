@@ -4,66 +4,77 @@
     "buttons": [
         {
             "order": 0,
+            "color": "green",
             "cc_number": 102,
             "cc_value": 1,
             "name": "mute"
         },
         {
             "order": 1,
+            "color": "red",
             "cc_number": 103,
             "cc_value": 1,
             "name": "amp 1"
         },
         {
             "order": 2,
+            "color": "red",
             "cc_number": 104,
             "cc_value": 1,
             "name": "amp 2"
         },
         {
             "order": 3,
+            "color": "red",
             "cc_number": 107,
             "cc_value": 1,
             "name": "amp 3"
         },
         {
             "order": 4,
+            "color": "red",
             "cc_number": 108,
             "cc_value": 1,
             "name": "amp 4"
         },
         {
             "order": 9,
+            "color": "red",
             "cc_number": 111,
             "cc_value": 1,
             "name": "attenuator 0N"
         },
         {
             "order": 10,
+            "color": "red",
             "cc_number": 112,
             "cc_value": 1,
             "name": "attenuator OFF"
         },
         {
             "order": 11,
+            "color": "red",
             "cc_number": 115,
             "cc_value": 1,
             "name": "cab 1"
         },
         {
             "order": 12,
+            "color": "red",
             "cc_number": 116,
             "cc_value": 1,
             "name": "cab 2"
         },
         {
             "order": 13,
+            "color": "red",
             "cc_number": 118,
             "cc_value": 1,
             "name": "cab 3"
         },
         {
             "order": 14,
+            "color": "red",
             "cc_number": 119,
             "cc_value": 1,
             "name": "cab 4"

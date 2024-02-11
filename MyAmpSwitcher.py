@@ -188,6 +188,12 @@ class MainWindow(QMainWindow):
             name = button_info.get("name", "Unknown")
             button = QPushButton(name)
             button.setMinimumHeight(40)
+            color = button_info.get("color",None)
+            if color is not None:
+                color = button_info.get("color", "black")  # Default to black if color is not specified
+                button.setStyleSheet(f"QPushButton:pressed{{background: #000;}}"
+                f"QPushButton{{background: {color}; border-radius: 10px; border: 1px solid #8f8f91; padding: 1px;}}"
+                    )
             button.setFont(QFont(settings["font"], settings["size"]))
             button.clicked.connect(
                 lambda _, pc=button_info.get(
@@ -258,6 +264,12 @@ class MainWindow(QMainWindow):
             name = button_info.get("name", "Unknown")
             button = QPushButton(name)
             button.setMinimumHeight(40)
+            color = button_info.get("color",None)
+            if color is not None:
+                color = button_info.get("color", "black")  # Default to black if color is not specified
+                button.setStyleSheet(f"QPushButton:pressed{{background: #000;}}"
+                f"QPushButton{{background: {color}; border-radius: 10px; border: 1px solid #8f8f91; padding: 1px;}}"
+                    )
             button.setFont(QFont(self.settings["font"], self.settings["size"]))
             button.clicked.connect(
                 lambda _, pc=pc_number, cc_num=cc_number, cc_val=cc_value: send_midi_message(

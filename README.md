@@ -46,19 +46,16 @@ This is a profile for a Brunetti XL" R-EVO:
     "buttons": [
         {
             "order": 0,
-            "color": "green",
             "program_change": 2,
             "name": "clean"
         },
         {
             "order": 1,
-            "color": "yellow",
             "program_change": 1,
             "name": "boost"
         },
         {
             "order": 2,
-            "color": "red",
             "program_change": 3,
             "name": "xlead"
         }
@@ -68,6 +65,7 @@ This is a profile for a Brunetti XL" R-EVO:
 
 ## Profile Notes
 Each profile should be saved with a meaningful ```"name"``` field, when loaded the name will appear as the window's title. Each button should have ```"name"``` have a ```"program_change"``` and/or ```"cc_number" ```and ```"cc_value"```.
+You can also assign a different ```"color"``` for each button e.g. "color": "green"
 
 ## Installation from the DMG file
 
