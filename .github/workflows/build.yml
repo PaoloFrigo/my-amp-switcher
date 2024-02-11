@@ -50,6 +50,7 @@ jobs:
                     --icon 'icon.icns' \
                     --noconsole  \
                     --windowed  \
+                    --add-data './Info.plist:.' \
                     --add-data './settings.json:.' \
                     --add-data './icon.icns:.' \
                     --add-data './profiles/*:profiles' \

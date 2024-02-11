@@ -5,9 +5,9 @@ pyinstaller --name 'MyAmpSwitcher' \
             --noconsole  \
             --windowed  \
             --add-data './settings.json:.' \
+            --add-data './Info.plist:.' \
             --add-data './icon.icns:.' \
             --add-data './profiles/*:profiles' \
-            --add-data='./.venv/lib/python3.11/site-packages/PyQt5/Qt5/plugins/platforms:./PyQt5/Qt/plugins/platforms'\
             --additional-hooks-dir='./' \
             --hidden-import mido.backends.rtmidi \
             --hidden-import pyqt5 \

@@ -290,8 +290,9 @@ class MainWindow(QMainWindow):
 
         # MIDI Output ComboBox
         midi_output_label = QLabel("MIDI Output:")
+        self.midi_output_combobox = QComboBox()
         midi_outputs = self.reload_midi_output()
-        self.midi_output_combobox.setCurrentIndex(0)  # Set default selection
+        #self.midi_output_combobox.setCurrentIndex(0)  # Set default selection
         self.midi_output_combobox.currentIndexChanged.connect(self.select_midi_output)
 
         refresh_midi_button = QPushButton("Refresh")
@@ -444,22 +445,19 @@ class MainWindow(QMainWindow):
         profile["channel"] = int(selected_channel)
 
     def reload_midi_output(self):
+        
+        # Recreate combo box if it's not available
+        if not hasattr(self, 'midi_output_combobox') or not self.midi_output_combobox:
+            self.midi_output_combobox = QComboBox()
+            self.midi_output_combobox.currentIndexChanged.connect(self.select_midi_output)
+
         midi_outputs = mido.get_output_names()
-        current_items = list(
-            set(
-                [
-                    self.midi_output_combobox.itemText(index)
-                    for index in range(self.midi_output_combobox.count())
-                ]
-            )
-        )
-        if midi_outputs != current_items:
-            self.midi_output_combobox.clear()
-            self.midi_output_combobox.addItems(midi_outputs)
-            self.midi_output_combobox.setCurrentText(settings["port_name"])
-        else:
-            pass
+
+        self.midi_output_combobox.clear()
+        self.midi_output_combobox.addItems(midi_outputs)
+        self.midi_output_combobox.setCurrentText(settings["port_name"])
         return midi_outputs
+
 
     def show_about_dialog(self):
         about_text = f"""<h2>MyAmpSwitcher v{__version__}</h2>
