@@ -593,8 +593,12 @@ def change_profile(selected_file=None):
         file_dialog.setNameFilter("JSON files (*.json)")
         file_dialog.setDirectory(os.path.join(script_directory, "profiles"))
         file_dialog.setWindowTitle("Select Profile JSON File")
-        if file_dialog.exec_():
+        
+        if file_dialog.exec_() == QFileDialog.Accepted:
             selected_file = file_dialog.selectedFiles()[0]
+        else:
+            window.update_status_bar("No profile selected")
+            return 
 
     settings = load_settings()
     new_profile_name = os.path.basename(selected_file)
