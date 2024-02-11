@@ -295,7 +295,7 @@ class MainWindow(QMainWindow):
         )
 
         # Clear existing widgets in the MIDI layout
-        for i in range(1, self.midi_layout.count()):
+        for i in range(0, self.midi_layout.count()):
             item = self.midi_layout.takeAt(0)
             if item.widget():
                 item.widget().deleteLater()
