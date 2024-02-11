@@ -11,6 +11,9 @@ This application provides a graphical user interface written using QT libraries 
 Preview of the MacOS version:
 ![preview](./media/preview.png)
 
+With colors:
+![preview](./media/preview-colored.png)
+
 Please note that MyAmpSwitcher can run on MacOS/Windows/Linux considering that is built with Python and QT and Midi libraries are ported across these platforms.
 
 ![icon.jpeg](media/icon.jpeg)
