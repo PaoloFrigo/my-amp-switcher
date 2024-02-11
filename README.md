@@ -71,12 +71,12 @@ Each profile should be saved with a meaningful ```"name"``` field, when loaded t
 
 You can also assign a different ```"color"``` for each button e.g. "color": "green". The color name is not case-sentive.
 
-This is the list of available colors:
+This is the list of available colours:
 ```AliceBlue, AntiqueWhite, Aqua, Aquamarine, Azure, Beige, Bisque, Black, BlanchedAlmond, Blue, BlueViolet, Brown, BurlyWood, CadetBlue, Chartreuse, Chocolate, Coral, CornflowerBlue, Cornsilk, Crimson, Cyan, DarkBlue, DarkCyan, DarkGoldenrod, DarkGray, DarkGreen, DarkKhaki, DarkMagenta, DarkOliveGreen, DarkOrange, DarkOrchid, DarkRed, DarkSalmon, DarkSeaGreen, DarkSlateBlue, DarkSlateGray, DarkTurquoise, DarkViolet, DeepPink, DeepSkyBlue, DimGray, DodgerBlue, Firebrick, FloralWhite, ForestGreen, Fuchsia, Gainsboro, GhostWhite, Gold, Goldenrod, Gray, Green, GreenYellow, Honeydew, HotPink, IndianRed, Indigo, Ivory, Khaki, Lavender, LavenderBlush, LawnGreen, LemonChiffon, LightBlue, LightCoral, LightCyan, LightGoldenrodYellow, LightGray, LightGreen, LightPink, LightSalmon, LightSeaGreen, LightSkyBlue, LightSlateGray, LightSteelBlue, LightYellow, Lime, LimeGreen, Linen, Magenta, Maroon, MediumAquamarine, MediumBlue, MediumOrchid, MediumPurple, MediumSeaGreen, MediumSlateBlue, MediumSpringGreen, MediumTurquoise, MediumVioletRed, MidnightBlue, MintCream, MistyRose, Moccasin, NavajoWhite, Navy, OldLace, Olive, OliveDrab, Orange, OrangeRed, Orchid, PaleGoldenrod, PaleGreen, PaleTurquoise, PaleVioletRed, PapayaWhip, PeachPuff, Peru, Pink, Plum, PowderBlue, Purple, Red, RosyBrown, RoyalBlue, SaddleBrown, Salmon, SandyBrown, SeaGreen, SeaShell, Sienna, Silver, SkyBlue, SlateBlue, SlateGray, Snow, SpringGreen, SteelBlue, Tan, Teal, Thistle, Tomato, Turquoise, Violet, Wheat, White, WhiteSmoke, Yellow, YellowGreen ```
 
 ## Installation from the DMG file
 
-Download the latest release as dmg file from the GitHub repository for your platfrom.
+Download the latest release as a dmg file from the GitHub repository for your platform.
 
 After mounting the image the following window will appear.
 ![App Install](./media/install.png)
@@ -85,7 +85,7 @@ Select the MyAmpSwitcher icon and drag it over the Application window to complet
 .
 
 ## Uninstalling the MyAmpSwitcher App
-Open Finder. Select the MyAmpSwitcher App and move it to bin.
+Open Finder. Select the MyAmpSwitcher App and move it to the bin.
 
 ## Installation instruction from GitHub
 
@@ -99,7 +99,7 @@ To run the MyAmpSwitcher application, follow these steps:
 
 2. Create a virtual environment and activate it
 
-   on macos/linux
+   on macOS/Linux
     ```bash
     cd my-amp-switcher
     python3 -m venv .venv
