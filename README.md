@@ -76,21 +76,23 @@ This is the list of available colours:
 
 ## Installation from the DMG file
 
-Download the latest release as a dmg file from the GitHub repository for your platform.
+1. Download the latest release as a dmg file from the GitHub repository for your platform.
 
-After mounting the image the following window will appear.
+2. After mounting the image the following window will appear.
 ![App Install](./media/install.png)
 
-Select the MyAmpSwitcher icon and drag it over the Application window to complete the installation.
+3. Select the MyAmpSwitcher icon and drag it over the Application window to complete the installation.
 
 ### Warnings when a DMG is not signed.
 When a dmg is not signed macOS will present this warning message:
 ![warning1](./media/warning1.png)
 
-Open System Preferences and allow the system to open the app as presented in the picture below:
+* Open "System Settings" and allow the system to open the app as presented in the picture below:
 ![system_pref](./media/system_pref.png)
 
-At last when the app will run the will a final notification for this
+* Will then ask for your password to authorize the exception to the recommended settings.
+
+* Then the app will run the will prompt a final notification for this
 Open System Preferences and allow the system to open the app:
 ![system_pref](./media/warning2.png)
 
