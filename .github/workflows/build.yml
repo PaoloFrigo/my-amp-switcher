@@ -39,7 +39,7 @@ jobs:
 
     - name: Modify Info.plist with version and date
       run: |
-        INFO_PLIST="path/to/Info.plist"  # Replace with the actual path to your Info.plist file
+        INFO_PLIST="./Info.plist"  # Replace with the actual path to your Info.plist file
         DATE=$(echo "${{ steps.generate_version.outputs.date }}")
         plutil -replace CFBundleVersion -string "${DATE}" "${INFO_PLIST}"
 
