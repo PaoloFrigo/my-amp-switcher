@@ -3,14 +3,14 @@ rm -rf build dist
 pyinstaller --name 'MyAmpSwitcher' \
             --icon 'icon.icns' \
             --noconsole  \
-            --windowed  \
-            --add-data './settings.json:.' \
             --add-data './Info.plist:.' \
+            --add-data './settings.json:.' \
             --add-data './icon.icns:.' \
             --add-data './profiles/*:profiles' \
             --additional-hooks-dir='./' \
             --hidden-import mido.backends.rtmidi \
             --hidden-import pyqt5 \
+            --version-file "./Info.plist" \
             MyAmpSwitcher.py
 
 
