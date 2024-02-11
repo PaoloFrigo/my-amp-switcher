@@ -515,6 +515,7 @@ class MainWindow(QMainWindow):
         try:
             output_port = mido.open_output(selected_port)
         except Exception as e:
+            output_port = None
             logging.error(f"Error opening MIDI port: {e}")
             self.update_status_bar("MIDI Output selected cannot be empty")
             #QMessageBox.warning(None, "MIDI Output Error", f"Error opening MIDI port: {e}")
