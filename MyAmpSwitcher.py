@@ -64,8 +64,8 @@ def load_settings(script_directory=script_directory,settings_filename="settings.
     default_settings = {
         "port_name": "",
         "channel": 0,
-        "profile": "default.json",  # Provide a default profile
-        "icon": "icon.icns",  # Assuming there is an icon.icns file
+        "profile": "default.json",  
+        "icon": "icon.icns",  
     }
 
     if not os.path.isfile(settings_file_path):
@@ -142,33 +142,33 @@ class MainWindow(QMainWindow):
         help_menu.addAction(about_action)
 
         # MIDI Output ComboBox
-        midi_output_label = QLabel("MIDI Output:")
+        self.midi_output_label = QLabel("MIDI Output:")
         self.midi_output_combobox = QComboBox()
         midi_outputs = self.reload_midi_output()
         self.midi_output_combobox.currentIndexChanged.connect(self.select_midi_output)
 
-        refresh_midi_button = QPushButton("Refresh")
-        refresh_midi_button.clicked.connect(self.reload_midi_output)
+        self.refresh_midi_button = QPushButton("Refresh")
+        self.refresh_midi_button.clicked.connect(self.reload_midi_output)
 
         # MIDI Channel ComboBox
-        midi_channel_label = QLabel("Channel:")
+        self.midi_channel_label = QLabel("Channel:")
         self.midi_channel_combobox = QComboBox()
         self.midi_channel_combobox.addItems(map(str, range(128)))  # Adding values 0 to 127
         self.midi_channel_combobox.setCurrentText(str(profile_data.get("channel", 0)))
         self.midi_channel_combobox.currentIndexChanged.connect(self.select_midi_channel)
 
         # Save Button
-        save_button = QPushButton("Save")
-        save_button.clicked.connect(self.save_channel)
+        self.save_button = QPushButton("Save")
+        self.save_button.clicked.connect(self.save_channel)
 
         # Create a horizontal layout for MIDI output, channel, save, and profile change buttons
         self.midi_layout = QHBoxLayout()
-        self.midi_layout.addWidget(midi_output_label)
+        self.midi_layout.addWidget(self.midi_output_label)
         self.midi_layout.addWidget(self.midi_output_combobox)
-        self.midi_layout.addWidget(refresh_midi_button)
-        self.midi_layout.addWidget(midi_channel_label)
+        self.midi_layout.addWidget(self.refresh_midi_button)
+        self.midi_layout.addWidget(self.midi_channel_label)
         self.midi_layout.addWidget(self.midi_channel_combobox)
-        self.midi_layout.addWidget(save_button)
+        self.midi_layout.addWidget(self.save_button)
 
         central_widget = QWidget(self)
         central_layout = QVBoxLayout(central_widget)
@@ -287,7 +287,7 @@ class MainWindow(QMainWindow):
 
         # Set window title based on the profile name
         self.setWindowTitle(self.profile_data["name"])
-
+    
         # Update MIDI channel ComboBox
         self.update_midi_channel_combobox(self.profile_data.get("channel", 0))
 
@@ -296,51 +296,35 @@ class MainWindow(QMainWindow):
             sorted(self.profile_data.get("buttons", []), key=lambda x: x.get("order", 0))
         )
 
-        # Clear existing widgets in the MIDI layout
-        # for i in range(self.midi_layout.count()):
-        #     item = self.midi_layout.takeAt(0)
-        #     if item.widget():
-        #         item.widget().deleteLater()
-
-        # MIDI Output ComboBox - Check if it already exists before creating a new one
-        if not hasattr(self, 'midi_output_combobox'):
-            midi_output_label = QLabel("MIDI Output:")
-            self.midi_output_combobox = QComboBox()
-            self.midi_output_combobox.clear()
-            midi_outputs = self.reload_midi_output()
-            self.midi_output_combobox.currentIndexChanged.connect(self.select_midi_output)
-
-            refresh_midi_button = QPushButton("Refresh")
-            refresh_midi_button.clicked.connect(self.reload_midi_output)
-
-            # Add widgets to the MIDI layout
-            self.midi_layout.addWidget(midi_output_label)
-            self.midi_layout.addWidget(self.midi_output_combobox)
-            self.midi_layout.addWidget(refresh_midi_button)
-
-        # MIDI Channel ComboBox
-        midi_channel_label = QLabel("Channel:")
-        self.midi_channel_combobox = QComboBox()
-        self.midi_channel_combobox.addItems(map(str, range(128)))  # Adding values 0 to 127
-        self.midi_channel_combobox.setCurrentText(str(self.profile_data.get("channel", 0)))
-        self.midi_channel_combobox.currentIndexChanged.connect(self.select_midi_channel)
+        self.refresh_midi_button = QPushButton("Refresh")
+        self.refresh_midi_button.clicked.connect(self.reload_midi_output)
 
         # Save Button
-        save_button = QPushButton("Save")
-        save_button.clicked.connect(self.save_channel)
+        self.save_button = QPushButton("Save")
+        self.save_button.clicked.connect(self.save_channel)
 
         # Add widgets to the MIDI layout
-        self.midi_layout.addWidget(midi_channel_label)
-        self.midi_layout.addWidget(self.midi_channel_combobox)
-        self.midi_layout.addWidget(save_button)
+        # Create a list of tuples with widgets and their order
+        components = [
+            (self.midi_output_label, 0),
+            (self.midi_output_combobox, 1),
+            (self.refresh_midi_button, 2),
+            (self.midi_channel_label, 3),
+            (self.midi_channel_combobox, 4),
+            (self.save_button, 5),
+            ]
+        # Sort the components based on the order
+        sorted_components = sorted(components, key=lambda x: x[1])
+
+        # Add widgets to the MIDI layout in the sorted order
+        for widget, _ in sorted_components:
+            self.midi_layout.addWidget(widget)
 
         # Update status bar
         self.update_status_bar("Settings saved successfully")
 
         # Show the updated content
         self.show()
-
-
 
     def new_profile(self):
         template_json = {
@@ -462,20 +446,28 @@ class MainWindow(QMainWindow):
         profile["channel"] = int(selected_channel)
 
     def reload_midi_output(self):
-        
-        # if not hasattr(self, 'midi_output_combobox') or not self.midi_output_combobox:
-        #     return
-        #     # self.midi_output_combobox = QComboBox()
-        #     # self.midi_output_combobox.currentIndexChanged.connect(self.select_midi_output)
-        
-
         midi_outputs =  mido.get_output_names() if  mido.get_output_names() else []
 
-        self.midi_output_combobox.clear()
-        self.midi_output_combobox.addItems(midi_outputs)
-        self.midi_output_combobox.setCurrentText(settings["port_name"])
-        return midi_outputs
+         # Get the current items in the combobox
+        current_items = [self.midi_output_combobox.itemText(i) for i in range(self.midi_output_combobox.count())]
 
+        # Remove items that are in the combobox but not in the new midi_outputs list
+        for item in current_items:
+            if item not in midi_outputs:
+                index = self.midi_output_combobox.findText(item)
+                if index != -1:
+                    self.midi_output_combobox.removeItem(index)
+
+        # Add items that are in the new midi_outputs list but not in the combobox
+        for output in midi_outputs:
+            if output not in current_items:
+                self.midi_output_combobox.addItem(output)
+
+        # Set the current text to the desired port_name
+        if settings["port_name"] != "":
+            self.midi_output_combobox.setCurrentText(settings["port_name"])
+
+        return midi_outputs
 
     def show_about_dialog(self):
         about_text = f"""<h2>MyAmpSwitcher v{__version__}</h2>
@@ -524,7 +516,6 @@ class MainWindow(QMainWindow):
             self.update_status_bar("MIDI Output selected cannot be empty")
             #QMessageBox.warning(None, "MIDI Output Error", f"Error opening MIDI port: {e}")
 
-
 def load_settings():
     with open(os.path.join(script_directory, "settings.json")) as settings_file:
         return json.load(settings_file)
@@ -566,10 +557,6 @@ def send_midi_message(pc_number, cc_number, cc_value):
         window.update_status_bar(status_message)
     except Exception as e:
         logging.error(f"Unexpected error: {e}")
-
-
-
-
 
 def save_settings(profile_name=None,channel=0):
     try:
