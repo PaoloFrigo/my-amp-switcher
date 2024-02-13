@@ -58,7 +58,7 @@ jobs:
                     --hidden-import mido.backends.rtmidi \
                     --hidden-import pyqt5 \
                     --version-file "./Info.plist" \
-                    --target-architecture "universal2" \
+                    --target-architecture "arm64" \
                     MyAmpSwitcher.py
 
     - name: Upload macOS artifact
