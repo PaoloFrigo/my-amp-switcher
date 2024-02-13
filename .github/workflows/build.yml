@@ -14,10 +14,6 @@ jobs:
   build:
     runs-on: macos-latest
 
-    strategy:
-      matrix:
-        macos-version: [10.13, latest]
-
     steps:
     - name: Checkout repository
       uses: actions/checkout@v2
@@ -62,12 +58,13 @@ jobs:
                     --hidden-import mido.backends.rtmidi \
                     --hidden-import pyqt5 \
                     --version-file "./Info.plist" \
+                    --target-architecture "universal2" \
                     MyAmpSwitcher.py
 
     - name: Upload macOS artifact
       uses: actions/upload-artifact@v2
       with:
-        name: MyAmpSwitcher_macOS_${{ matrix.macos-version }}
+        name: MyAmpSwitcher_macOS_latest
         path: dist
 
   cleanup:
@@ -76,10 +73,10 @@ jobs:
       - name: Download macOS artifacts
         uses: actions/download-artifact@v2
         with:
-          name: MyAmpSwitcher_macOS_${{ matrix.macos-version }}
+          name: MyAmpSwitcher_macOS_latest
 
       - name: Remove old macOS artifacts
         run: |
-          if [ -f dist/MyAmpSwitcher_macOS_${{ matrix.macos-version }}.zip ]; then
-            ls -1 | grep "_macOS_${{ matrix.macos-version }}.zip$" | sort -r | tail -n +3 | xargs rm -rf
+          if [ -f dist/MyAmpSwitcher_macOS_latest.zip ]; then
+            ls -1 | grep "_macOS_latest.zip$" | sort -r | tail -n +3 | xargs rm -rf
           fi
