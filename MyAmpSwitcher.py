@@ -153,7 +153,7 @@ class MainWindow(QMainWindow):
         # MIDI Channel ComboBox
         self.midi_channel_label = QLabel("Channel:")
         self.midi_channel_combobox = QComboBox()
-        self.midi_channel_combobox.addItems(map(str, range(128)))  # Adding values 0 to 127
+        self.midi_channel_combobox.addItems(map(str, range(16)))  # Adding values 0 to 16
         self.midi_channel_combobox.setCurrentText(str(profile_data.get("channel", 0)))
         self.midi_channel_combobox.currentIndexChanged.connect(self.select_midi_channel)
 
