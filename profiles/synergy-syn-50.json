@@ -1,0 +1,36 @@
+{
+    "name": "SYNERGY SYN 50",
+    "channel": 0,
+    "buttons": [
+        {
+            "order": 0,
+            "cc_number": 56,
+            "cc_value": 64,
+            "name": "Channel 1A"
+        },
+        {
+            "order": 1,
+            "cc_number": 57,
+            "cc_value": 64,
+            "name": "Channel 1B"
+        },
+        {
+            "order": 2,
+            "cc_number": 58,
+            "cc_value": 64,
+            "name": "Channel 2A"
+        },
+        {
+            "order": 3,
+            "cc_number": 59,
+            "cc_value": 64,
+            "name": "Channel 2B"
+        },
+        {
+            "order": 4,
+            "cc_number": 64,
+            "cc_value": 64,
+            "name": "MUTE"
+        }
+    ]
+}

@@ -1,0 +1,61 @@
+{
+    "name": "MESA BOOGIE MARK VII",
+    "channel": 0,
+    "buttons": [
+        {
+            "order": 0,
+            "cc_number": 23,
+            "cc_value": 64,
+            "name": "Channel 1"
+        },
+        {
+            "order": 1,
+            "cc_number": 24,
+            "cc_value": 64,
+            "name": "Channel 2"
+        },
+        {
+            "order": 2,
+            "cc_number": 25,
+            "cc_value": 64,
+            "name": "Channel 3"
+        },
+        {
+            "order": 3,
+            "cc_number": 26,
+            "cc_value": 0,
+            "name": "FX Loop ON"
+        },
+        {
+            "order": 4,
+            "cc_number": 26,
+            "cc_value": 64,
+            "name": "FX Loop OFF"
+        },
+        {
+            "order": 5,
+            "cc_number": 27,
+            "cc_value": 0,
+            "name": "Reverb ON"
+        },
+        {
+            "order": 6,
+            "cc_number": 26,
+            "cc_value": 64,
+            "name": "Reverb OFF"
+        },
+        {
+            "order": 7,
+            "cc_number": 27,
+            "cc_value": 0,
+            "name": "Graphic EQ ON"
+        },
+        {
+            "order": 8,
+            "cc_number": 27,
+            "cc_value": 64,
+            "name": "Graphic EQ OFF"
+        }
+
+    ]
+}
