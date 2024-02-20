@@ -1,0 +1,102 @@
+{
+    "name": "MIDI Channel Switcher 8",
+    "channel": 0,
+    "buttons": [
+        {
+            "order": 0,
+            "cc_number": 41,
+            "cc_value": 64,
+            "name": "CH 1 On"
+        },
+        {
+            "order": 1,
+            "cc_number": 41,
+            "cc_value": 0,
+            "name": "CH 1 Off"
+        },
+        {
+            "order": 2,
+            "cc_number": 42,
+            "cc_value": 64,
+            "name": "CH 2 On"
+        },
+        {
+            "order": 3,
+            "cc_number": 42,
+            "cc_value": 0,
+            "name": "CH 2 Off"
+        },
+        {
+            "order": 4,
+            "cc_number": 43,
+            "cc_value": 64,
+            "name": "CH 3 On"
+        },
+        {
+            "order": 5,
+            "cc_number": 43,
+            "cc_value": 0,
+            "name": "CH 3 Off"
+        },
+        {
+            "order": 6,
+            "cc_number": 44,
+            "cc_value": 64,
+            "name": "CH 4 On"
+        },
+        {
+            "order": 7,
+            "cc_number": 44,
+            "cc_value": 0,
+            "name": "CH 4 Off"
+        },
+        {
+            "order": 8,
+            "cc_number": 45,
+            "cc_value": 64,
+            "name": "CH 5 On"
+        },
+        {
+            "order": 9,
+            "cc_number": 45,
+            "cc_value": 0,
+            "name": "CH 5 Off"
+        },
+        {
+            "order": 10,
+            "cc_number": 46,
+            "cc_value": 64,
+            "name": "CH 6 On"
+        },
+        {
+            "order": 11,
+            "cc_number": 46,
+            "cc_value": 0,
+            "name": "CH 6 Off"
+        },
+        {
+            "order": 12,
+            "cc_number": 47,
+            "cc_value": 64,
+            "name": "CH 7 On"
+        },
+        {
+            "order": 13,
+            "cc_number": 47,
+            "cc_value": 0,
+            "name": "CH 7 Off"
+        },
+        {
+            "order": 14,
+            "cc_number": 48,
+            "cc_value": 64,
+            "name": "CH 8 On"
+        },
+        {
+            "order": 15,
+            "cc_number": 48,
+            "cc_value": 0,
+            "name": "CH 8 Off"
+        }
+    ]
+}
