@@ -17,12 +17,13 @@ from PyQt5.QtWidgets import (
     QMessageBox,
     QGridLayout,
     QMainWindow,
+    QSplitter,
     QAction,
     QDialog,
     QTextEdit,
     QStatusBar,
 )
-from PyQt5.QtCore import Qt
+from PyQt5.QtCore import Qt, QTimer
 from PyQt5.QtGui import QIcon, QFont
 
 # Global variables
@@ -120,6 +121,12 @@ class MainWindow(QMainWindow):
         load_action = QAction("Load", self)
         load_action.triggered.connect(self.load_profile)
         profile_menu.addAction(load_action)
+
+        profile_menu.addSeparator()
+
+        record_action = QAction("Record", self)
+        record_action.triggered.connect(self.record_profile)
+        profile_menu.addAction(record_action)
 
         profile_menu.addSeparator()
 
@@ -416,6 +423,10 @@ class MainWindow(QMainWindow):
             # Update the settings and profile_data
             settings["profile"] = new_profile_name
             change_profile()
+
+    def record_profile(self):
+        record_window = ProfileRecorderWindow()
+        record_window.exec_()
 
     def export_profile(self):
         settings = load_settings()
@@ -720,7 +731,6 @@ class EditSettingsWindow(QDialog):
         new_settings = self.main_window.settings.copy()
         new_settings.update(new_settings_data)
 
-        # Call the update_content method of the existing main window
         self.main_window.update_content(self.profile_data, new_settings)
         self.main_window.update_status_bar(f"Settings saved successfully")
         self.accept()  
@@ -729,6 +739,168 @@ class EditSettingsWindow(QDialog):
         with open(os.path.join(self.script_directory, self.setting_filename)) as settings_file:
             return json.load(settings_file)
 
+
+class MidiHandler:
+    def __init__(self, window, midi_message_list):
+        self.window = window
+        self.midi_input = None
+        self.midi_message_list = midi_message_list
+
+    def start_midi_input(self):
+        try:
+            self.midi_input = mido.open_input()
+            self.window.update_status_bar("MIDI Input Capture\n")
+            self.midi_input.callback = self.handle_midi_message
+
+        except Exception as e:
+            self.window.update_status_bar(f"Error starting MIDI input: {e}\n")
+
+    def stop_midi_input(self):
+        if self.midi_input:
+            self.midi_input.close()
+            self.window.update_status_bar("MIDI Input Stopped\n")
+            self.midi_input = None
+
+    def handle_midi_message(self, message):
+        # Process MIDI messages here and display in the left section
+        self.midi_message_list += [message]
+        self.window.midi_log.append(f"{message}")
+        self.window.update_status_bar(f"Received MIDI message: {message}")
+
+    def generate_profile(self, midi_message_list):
+        midi_message_list 
+        
+        profile_name = "profilename"
+        channel = 0
+        buttons = []
+        counter = 0
+        for rec in midi_message_list:
+            button = {}
+            if hasattr(rec, "program") or hasattr(rec, "control"):
+                button = {
+                    "order": counter,
+                    "name": f"button {counter+1}"
+                }
+            if hasattr(rec, "program"):
+                button["program_change"] = rec.program
+            if hasattr(rec, "control"):
+                button["cc_number"]= rec.control
+                button["cc_value"]= rec.value
+            if button != {}:
+                buttons +=[button]
+                counter += 1
+        config_data = {
+            "name": profile_name,
+            "channel": channel,
+            "buttons": buttons
+        }
+        self.window.update_status_bar("Profile generated")
+        self.window.right_column.clear()
+        self.window.right_column.append(json.dumps(config_data,indent=2))
+        
+
+class StatusBarUpdater:
+    def __init__(self, status_label, duration=1000):
+        self.status_label = status_label
+        self.duration = duration
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, exc_type, exc_value, traceback):
+        QTimer.singleShot(self.duration, self.clear_status_bar)
+
+    def set_text(self, message):
+        self.status_label.setText(message)
+
+    def clear_status_bar(self):
+        self.status_label.clear()
+
+class ProfileRecorderWindow(QDialog):
+    def __init__(self):
+        super(ProfileRecorderWindow, self).__init__()
+
+        self.midi_message_list = []
+
+        self.setWindowTitle("MIDI Profile Recorder")
+
+        self.ops_button_layout = QHBoxLayout()
+
+        self.start_button = QPushButton("Start", self)
+        self.stop_button = QPushButton("Stop and Generate", self)
+
+        self.ops_button_layout.addWidget(self.start_button)
+        self.ops_button_layout.addWidget(self.stop_button)
+
+        self.splitter = QSplitter()
+        self.left_column = QTextEdit(self)
+        self.right_column = QTextEdit(self)
+
+        self.editor_button_layout = QHBoxLayout()
+        self.save_button = QPushButton("Save As Profile", self)
+        self.clear_button = QPushButton("Clear", self)
+        self.editor_button_layout.addWidget(self.clear_button)
+        self.editor_button_layout.addWidget(self.save_button)
+        self.midi_log = self.left_column
+
+        self.status_label = QLabel() 
+
+        self.splitter.addWidget(self.left_column)
+        self.splitter.addWidget(self.right_column)
+
+        self.layout = QVBoxLayout(self)
+        self.layout.addLayout(self.ops_button_layout)
+        self.layout.addWidget(self.splitter)
+        self.layout.addLayout(self.editor_button_layout)
+        self.layout.addWidget(self.status_label)
+
+        self.midi_handler = MidiHandler(self, self.midi_message_list)
+
+        self.left_column.setReadOnly(True)
+        self.right_column.setReadOnly(True)
+
+        self.start_button.clicked.connect(self.midi_handler.start_midi_input)
+        self.stop_button.clicked.connect(self.stop_midi)
+        self.clear_button.clicked.connect(self.clear_midi_log)
+        self.save_button.clicked.connect(self.save_config)
+
+    def stop_midi(self):
+        self.midi_handler.stop_midi_input()
+        self.midi_handler.generate_profile(self.midi_message_list)
+
+    def clear_midi_log(self):
+        self.midi_message_list = []
+        self.midi_log.clear()
+        self.right_column.clear()
+        self.update_status_bar("Clear MIDI log and editor")
+
+    def update_status_bar(self, message):
+        with StatusBarUpdater(self.status_label) as updater:
+            updater.set_text(message)
+
+    def clear_status_bar(self):
+        self.status_label.clear()
+
+    def save_config(self):
+        profile_data = self.right_column.toPlainText()
+        if profile_data != "":
+            options = QFileDialog.Options()
+            options |= QFileDialog.DontUseNativeDialog
+            file_dialog = QFileDialog()
+            file_dialog.setFileMode(QFileDialog.AnyFile)
+            file_dialog.setAcceptMode(QFileDialog.AcceptSave)
+            file_dialog.setNameFilter("JSON files (*.json)")
+            file_dialog.setWindowTitle("Save this profile as JSON File")
+            file_dialog.setDefaultSuffix("json")  # Set the default extension
+            if file_dialog.exec_():
+                selected_file = file_dialog.selectedFiles()[0]
+                with open(selected_file, "w") as json_file:
+                    json_file.writelines(profile_data)
+                self.update_status_bar(
+                    f"Profile exported successfully: {selected_file}"
+                )
+        else:
+            self.update_status_bar("Nothing to save")
 
 def main():
     global settings, profile_data, output_port, window, midi_channel_combobox
