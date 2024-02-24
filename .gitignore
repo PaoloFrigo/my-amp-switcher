@@ -5,7 +5,7 @@ releases/
 *.spec
 local-test.py
 #Logs
-*.log 
+*.log
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]

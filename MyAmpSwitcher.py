@@ -81,6 +81,10 @@ def load_settings(script_directory=script_directory, settings_filename="settings
         return default_settings
 
 
+class ProfileNotValid(Exception):
+    pass
+
+
 def load_profile_data(profile_name):
     json_file_path = os.path.join(script_directory, "profiles", profile_name)
     if not os.path.isfile(json_file_path):
@@ -92,7 +96,8 @@ def load_profile_data(profile_name):
             return json.load(json_file)
     except Exception as e:
         logging.error(f"Error loading profile data: {e}")
-        return {"name": "Error Profile", "channel": 0, "buttons": []}
+        # return {"name": "Error Profile", "channel": 0, "buttons": []}
+        raise ProfileNotValid("Error loading profile data") from e
 
 
 class MainWindow(QMainWindow):
@@ -151,7 +156,7 @@ class MainWindow(QMainWindow):
         # MIDI Output ComboBox
         self.midi_output_label = QLabel("MIDI Output:")
         self.midi_output_combobox = QComboBox()
-        midi_outputs = self.reload_midi_output()
+        self.reload_midi_output()
         self.midi_output_combobox.currentIndexChanged.connect(self.select_midi_output)
 
         self.refresh_midi_button = QPushButton("Refresh")
@@ -191,9 +196,6 @@ class MainWindow(QMainWindow):
         self.channel_buttons_layout = QGridLayout()
 
         for idx, button_info in enumerate(sorted_buttons):
-            pc_number = button_info.get("program_change", None)
-            cc_number = button_info.get("cc_number", None)
-            cc_value = button_info.get("cc_value", None)
             name = button_info.get("name", "Unknown")
             button = QPushButton(name)
             button.setMinimumHeight(40)
@@ -431,7 +433,7 @@ class MainWindow(QMainWindow):
             global profile_data
 
             # Load the new profile data
-            new_profile_data = load_profile_data(new_profile_name)
+            load_profile_data(new_profile_name)
 
             # Update the settings and profile_data
             settings["profile"] = new_profile_name
@@ -442,7 +444,7 @@ class MainWindow(QMainWindow):
         record_window.exec_()
 
     def export_profile(self):
-        settings = load_settings()
+        load_settings()
         options = QFileDialog.Options()
         options |= QFileDialog.DontUseNativeDialog
         file_dialog = QFileDialog()
@@ -544,17 +546,6 @@ class MainWindow(QMainWindow):
             # QMessageBox.warning(None, "MIDI Output Error", f"Error opening MIDI port: {e}")
 
 
-def load_settings():
-    with open(os.path.join(script_directory, "settings.json")) as settings_file:
-        return json.load(settings_file)
-
-
-def load_profile_data(profile_name):
-    json_file_path = os.path.join(script_directory, "profiles", profile_name)
-    with open(json_file_path) as json_file:
-        return json.load(json_file)
-
-
 def send_midi_message(pc_number, cc_number, cc_value):
     if output_port is None:
         QMessageBox.warning(
@@ -639,7 +630,7 @@ def change_profile(selected_file=None):
     )  # Save the changes to settings.json
 
     window.update_content(new_profile_data, settings)
-    window.update_status_bar(f"Profile loaded")
+    window.update_status_bar("Profile loaded")
 
 
 class EditProfileWindow(QDialog):
@@ -694,7 +685,7 @@ class EditProfileWindow(QDialog):
     def reload_main_window(self):
         # Call the update_content method of the existing main window
         self.main_window.update_content(self.profile_data, self.settings)
-        self.main_window.update_status_bar(f"Profile saved successfully")
+        self.main_window.update_status_bar("Profile saved successfully")
 
         self.accept()
 
@@ -759,7 +750,7 @@ class EditSettingsWindow(QDialog):
         new_settings.update(new_settings_data)
 
         self.main_window.update_content(self.profile_data, new_settings)
-        self.main_window.update_status_bar(f"Settings saved successfully")
+        self.main_window.update_status_bar("Settings saved successfully")
         self.accept()
 
     def load_settings(self):
@@ -940,7 +931,10 @@ def main():
     settings = load_settings()
     try:
         profile_data = load_profile_data(settings["profile"])
-    except:
+    except ProfileNotValid:
+        logging.error(
+            f"Profile {settings['profile']} cannot be laoaded. Loading sample profile instead."
+        )
         profile_data = load_profile_data("sample.json")
         save_settings("sample.json", profile_data["channel"])
 
@@ -957,7 +951,7 @@ def main():
 
     window = MainWindow(profile_data, settings)
     if len(mido.get_output_names()) == 0:
-        window.update_status_bar(f"No MIDI output found.")
+        window.update_status_bar("No MIDI output found.")
     window.setWindowTitle(profile_data["name"])
     window.show()
 

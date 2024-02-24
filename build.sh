@@ -29,4 +29,3 @@ create-dmg \
   --app-drop-link 425 120 \
   "dist/MyAmpSwitcher.dmg" \
   "dist/dmg/"
-
