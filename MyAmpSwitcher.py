@@ -49,7 +49,7 @@ __version__ = plist_data.get("CFBundleShortVersionString", "Unknown")
 log_file_path = os.path.join(script_directory, "MyAmpSwitcher.log")
 logging.basicConfig(
     filename=log_file_path,
-    level=logging.DEBUG,
+    level=logging.WARNING,
     format="%(asctime)s - %(levelname)s - %(message)s",
 )
 
