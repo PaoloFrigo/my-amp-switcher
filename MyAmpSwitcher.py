@@ -35,14 +35,14 @@ window = None
 midi_channel_combobox = None
 
 # Path to your Info.plist file
-plist_path = os.path.join(script_directory, 'Info.plist')
+plist_path = os.path.join(script_directory, "Info.plist")
 
 # Load the Info.plist file
-with open(plist_path, 'rb') as plist_file:
+with open(plist_path, "rb") as plist_file:
     plist_data = plistlib.load(plist_file)
 
 # Extract the version information
-__version__ = plist_data.get('CFBundleShortVersionString', 'Unknown')
+__version__ = plist_data.get("CFBundleShortVersionString", "Unknown")
 
 
 # Configure logging
@@ -60,13 +60,13 @@ def ensure_directories_exist():
         os.makedirs(profiles_directory)
 
 
-def load_settings(script_directory=script_directory,settings_filename="settings.json"):
+def load_settings(script_directory=script_directory, settings_filename="settings.json"):
     settings_file_path = os.path.join(script_directory, settings_filename)
     default_settings = {
         "port_name": "",
         "channel": 0,
-        "profile": "default.json",  
-        "icon": "icon.icns",  
+        "profile": "default.json",
+        "icon": "icon.icns",
     }
 
     if not os.path.isfile(settings_file_path):
@@ -160,7 +160,9 @@ class MainWindow(QMainWindow):
         # MIDI Channel ComboBox
         self.midi_channel_label = QLabel("Channel:")
         self.midi_channel_combobox = QComboBox()
-        self.midi_channel_combobox.addItems(map(str, range(17)))  # Adding values 0 to 16
+        self.midi_channel_combobox.addItems(
+            map(str, range(17))
+        )  # Adding values 0 to 16
         self.midi_channel_combobox.setCurrentText(str(profile_data.get("channel", 0)))
         self.midi_channel_combobox.currentIndexChanged.connect(self.select_midi_channel)
 
@@ -195,12 +197,15 @@ class MainWindow(QMainWindow):
             name = button_info.get("name", "Unknown")
             button = QPushButton(name)
             button.setMinimumHeight(40)
-            color = button_info.get("color",None)
+            color = button_info.get("color", None)
             if color is not None:
-                color = button_info.get("color", "black")  # Default to black if color is not specified
-                button.setStyleSheet(f"QPushButton:pressed{{background: #000;}}"
-                f"QPushButton{{background: {color}; border-radius: 10px; border: 1px solid #8f8f91; padding: 1px;}}"
-                    )
+                color = button_info.get(
+                    "color", "black"
+                )  # Default to black if color is not specified
+                button.setStyleSheet(
+                    f"QPushButton:pressed{{background: #000;}}"
+                    f"QPushButton{{background: {color}; border-radius: 10px; border: 1px solid #8f8f91; padding: 1px;}}"
+                )
             button.setFont(QFont(settings["font"], settings["size"]))
             button.clicked.connect(
                 lambda _, pc=button_info.get(
@@ -237,7 +242,9 @@ class MainWindow(QMainWindow):
         try:
             if profile_data:
                 new_profile_data = profile_data.copy()
-                new_profile_data["channel"] = int(self.midi_channel_combobox.currentText())
+                new_profile_data["channel"] = int(
+                    self.midi_channel_combobox.currentText()
+                )
 
             with open(
                 os.path.join(script_directory, "profiles", settings["profile"]), "w"
@@ -253,12 +260,11 @@ class MainWindow(QMainWindow):
 
     def update_status_bar(self, message, timeout=2000):
         self.statusBar.showMessage(message, timeout)
-    
+
     def update_midi_channel_combobox(self, new_channel):
         current_index = self.midi_channel_combobox.findText(str(new_channel))
         if current_index != -1:
             self.midi_channel_combobox.setCurrentIndex(current_index)
-
 
     def update_buttons_layout(self, sorted_buttons):
         for button in self.findChildren(QPushButton):
@@ -271,12 +277,15 @@ class MainWindow(QMainWindow):
             name = button_info.get("name", "Unknown")
             button = QPushButton(name)
             button.setMinimumHeight(40)
-            color = button_info.get("color",None)
+            color = button_info.get("color", None)
             if color is not None:
-                color = button_info.get("color", "black")  # Default to black if color is not specified
-                button.setStyleSheet(f"QPushButton:pressed{{background: #000;}}"
-                f"QPushButton{{background: {color}; border-radius: 10px; border: 1px solid #8f8f91; padding: 1px;}}"
-                    )
+                color = button_info.get(
+                    "color", "black"
+                )  # Default to black if color is not specified
+                button.setStyleSheet(
+                    f"QPushButton:pressed{{background: #000;}}"
+                    f"QPushButton{{background: {color}; border-radius: 10px; border: 1px solid #8f8f91; padding: 1px;}}"
+                )
             button.setFont(QFont(self.settings["font"], self.settings["size"]))
             button.clicked.connect(
                 lambda _, pc=pc_number, cc_num=cc_number, cc_val=cc_value: send_midi_message(
@@ -286,7 +295,7 @@ class MainWindow(QMainWindow):
 
             row, col = divmod(idx, self.settings["buttons_per_row"])
             self.channel_buttons_layout.addWidget(button, row, col)
-            
+
     def update_content(self, new_profile_data, new_settings):
         # Update profile data and settings
         self.profile_data = new_profile_data
@@ -294,13 +303,15 @@ class MainWindow(QMainWindow):
 
         # Set window title based on the profile name
         self.setWindowTitle(self.profile_data["name"])
-    
+
         # Update MIDI channel ComboBox
         self.update_midi_channel_combobox(self.profile_data.get("channel", 0))
 
         # Update buttons layout
         self.update_buttons_layout(
-            sorted(self.profile_data.get("buttons", []), key=lambda x: x.get("order", 0))
+            sorted(
+                self.profile_data.get("buttons", []), key=lambda x: x.get("order", 0)
+            )
         )
 
         self.refresh_midi_button = QPushButton("Refresh")
@@ -319,7 +330,7 @@ class MainWindow(QMainWindow):
             (self.midi_channel_label, 3),
             (self.midi_channel_combobox, 4),
             (self.save_button, 5),
-            ]
+        ]
         # Sort the components based on the order
         sorted_components = sorted(components, key=lambda x: x[1])
 
@@ -371,7 +382,9 @@ class MainWindow(QMainWindow):
             global profile_data
             profile_data = new_profile_data
 
-            save_settings(channel=int(self.midi_channel_combobox.currentText()))  # Save the changes to settings.json
+            save_settings(
+                channel=int(self.midi_channel_combobox.currentText())
+            )  # Save the changes to settings.json
 
             # Reload the main window with the new profile data
             self.setWindowTitle(
@@ -387,11 +400,11 @@ class MainWindow(QMainWindow):
             self.show()
 
     def edit_profile(self):
-        edit_profile_window = EditProfileWindow(profile_data, self,script_directory)
+        edit_profile_window = EditProfileWindow(profile_data, self, script_directory)
         edit_profile_window.exec_()
 
     def edit_settings(self):
-        edit_settings__window = EditSettingsWindow(profile_data,self,script_directory)
+        edit_settings__window = EditSettingsWindow(profile_data, self, script_directory)
         edit_settings__window.exec_()
 
     def load_profile(self):
@@ -457,10 +470,13 @@ class MainWindow(QMainWindow):
         profile["channel"] = int(selected_channel)
 
     def reload_midi_output(self):
-        midi_outputs =  mido.get_output_names() if  mido.get_output_names() else []
+        midi_outputs = mido.get_output_names() if mido.get_output_names() else []
 
-         # Get the current items in the combobox
-        current_items = [self.midi_output_combobox.itemText(i) for i in range(self.midi_output_combobox.count())]
+        # Get the current items in the combobox
+        current_items = [
+            self.midi_output_combobox.itemText(i)
+            for i in range(self.midi_output_combobox.count())
+        ]
 
         # Remove items that are in the combobox but not in the new midi_outputs list
         for item in current_items:
@@ -482,18 +498,18 @@ class MainWindow(QMainWindow):
 
     def show_about_dialog(self):
         about_text = f"""<h2>MyAmpSwitcher v{__version__}</h2>
-                        MyAmpSwitcher was created by Paolo Frigo and released as an open source 
+                        MyAmpSwitcher was created by Paolo Frigo and released as an open source
                         project under the MIT License.
                         <br><br>
-                        Visit the <a href='https://github.com/paolofrigo/my-amp-switcher'>official page on GitHub</a> 
-                        for more information and check for new releases. 
+                        Visit the <a href='https://github.com/paolofrigo/my-amp-switcher'>official page on GitHub</a>
+                        for more information and check for new releases.
                         <h2>SHOW YOUR SUPPORT</h2>
                         Don't forget to give a ⭐️ on github you found this app useful!
                         <h2>DISCLAIMER</h2>
-                        THE SOFTWARE IS PROVIDED AS IS, WITHOUT WARRANTY OF ANY KIND, 
+                        THE SOFTWARE IS PROVIDED AS IS, WITHOUT WARRANTY OF ANY KIND,
                         EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-                        MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. 
-                        IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, 
+                        MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+                        IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
                         DAMAGES OR OTHER LIABILITY,
                         WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
                         CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE."""
@@ -513,7 +529,7 @@ class MainWindow(QMainWindow):
 
         about_dialog.exec_()
 
-    def select_midi_output(self,index):
+    def select_midi_output(self, index):
         selected_port = self.midi_output_combobox.itemText(index)
         settings["port_name"] = selected_port
         global output_port
@@ -525,7 +541,8 @@ class MainWindow(QMainWindow):
             output_port = None
             logging.error(f"Error opening MIDI port: {e}")
             self.update_status_bar("MIDI Output selected cannot be empty")
-            #QMessageBox.warning(None, "MIDI Output Error", f"Error opening MIDI port: {e}")
+            # QMessageBox.warning(None, "MIDI Output Error", f"Error opening MIDI port: {e}")
+
 
 def load_settings():
     with open(os.path.join(script_directory, "settings.json")) as settings_file:
@@ -569,7 +586,8 @@ def send_midi_message(pc_number, cc_number, cc_value):
     except Exception as e:
         logging.error(f"Unexpected error: {e}")
 
-def save_settings(profile_name=None,channel=0):
+
+def save_settings(profile_name=None, channel=0):
     try:
         if profile_name is not None or profile_name is not False:
             settings["profile"] = profile_name
@@ -581,7 +599,7 @@ def save_settings(profile_name=None,channel=0):
 
         if profile_data:
             new_profile_data = profile_data.copy()
-            new_profile_data["channel"] = channel 
+            new_profile_data["channel"] = channel
 
     except Exception as e:
         logging.error(f"Error saving settings: {e}")
@@ -590,7 +608,7 @@ def save_settings(profile_name=None,channel=0):
 
 def change_profile(selected_file=None):
     global window, profile_data
-    #Importing the profile
+    # Importing the profile
     if selected_file is None:
         options = QFileDialog.Options()
         options |= QFileDialog.DontUseNativeDialog
@@ -599,12 +617,12 @@ def change_profile(selected_file=None):
         file_dialog.setNameFilter("JSON files (*.json)")
         file_dialog.setDirectory(os.path.join(script_directory, "profiles"))
         file_dialog.setWindowTitle("Select Profile JSON File")
-        
+
         if file_dialog.exec_() == QFileDialog.Accepted:
             selected_file = file_dialog.selectedFiles()[0]
         else:
             window.update_status_bar("No profile selected")
-            return 
+            return
 
     settings = load_settings()
     new_profile_name = os.path.basename(selected_file)
@@ -616,10 +634,13 @@ def change_profile(selected_file=None):
     settings["profile"] = new_profile_name
     profile_data = new_profile_data
 
-    save_settings(os.path.basename(selected_file),profile_data["channel"])  # Save the changes to settings.json
+    save_settings(
+        os.path.basename(selected_file), profile_data["channel"]
+    )  # Save the changes to settings.json
 
     window.update_content(new_profile_data, settings)
     window.update_status_bar(f"Profile loaded")
+
 
 class EditProfileWindow(QDialog):
     def __init__(self, profile_data, main_window, script_directory):
@@ -657,7 +678,10 @@ class EditProfileWindow(QDialog):
 
             # Save the changes to the profile file
             with open(
-                os.path.join(self.script_directory, "profiles", self.settings["profile"]), "w"
+                os.path.join(
+                    self.script_directory, "profiles", self.settings["profile"]
+                ),
+                "w",
             ) as profile_file:
                 json.dump(self.profile_data, profile_file, indent=4)
             logging.info(f"Saved {self.settings['profile']}")
@@ -672,14 +696,17 @@ class EditProfileWindow(QDialog):
         self.main_window.update_content(self.profile_data, self.settings)
         self.main_window.update_status_bar(f"Profile saved successfully")
 
-        self.accept()  
+        self.accept()
 
     def load_settings(self):
-        with open(os.path.join(self.script_directory, self.setting_filename)) as settings_file:
+        with open(
+            os.path.join(self.script_directory, self.setting_filename)
+        ) as settings_file:
             return json.load(settings_file)
-        
+
+
 class EditSettingsWindow(QDialog):
-    def __init__(self, profile_data, main_window,script_directory):
+    def __init__(self, profile_data, main_window, script_directory):
         super(EditSettingsWindow, self).__init__()
 
         self.setting_filename = "settings.json"
@@ -733,10 +760,12 @@ class EditSettingsWindow(QDialog):
 
         self.main_window.update_content(self.profile_data, new_settings)
         self.main_window.update_status_bar(f"Settings saved successfully")
-        self.accept()  
+        self.accept()
 
     def load_settings(self):
-        with open(os.path.join(self.script_directory, self.setting_filename)) as settings_file:
+        with open(
+            os.path.join(self.script_directory, self.setting_filename)
+        ) as settings_file:
             return json.load(settings_file)
 
 
@@ -768,8 +797,8 @@ class MidiHandler:
         self.window.update_status_bar(f"Received MIDI message: {message}")
 
     def generate_profile(self, midi_message_list):
-        midi_message_list 
-        
+        midi_message_list
+
         profile_name = "profilename"
         channel = 0
         buttons = []
@@ -777,27 +806,20 @@ class MidiHandler:
         for rec in midi_message_list:
             button = {}
             if hasattr(rec, "program") or hasattr(rec, "control"):
-                button = {
-                    "order": counter,
-                    "name": f"button {counter+1}"
-                }
+                button = {"order": counter, "name": f"button {counter+1}"}
             if hasattr(rec, "program"):
                 button["program_change"] = rec.program
             if hasattr(rec, "control"):
-                button["cc_number"]= rec.control
-                button["cc_value"]= rec.value
+                button["cc_number"] = rec.control
+                button["cc_value"] = rec.value
             if button != {}:
-                buttons +=[button]
+                buttons += [button]
                 counter += 1
-        config_data = {
-            "name": profile_name,
-            "channel": channel,
-            "buttons": buttons
-        }
+        config_data = {"name": profile_name, "channel": channel, "buttons": buttons}
         self.window.update_status_bar("Profile generated")
         self.window.right_column.clear()
-        self.window.right_column.append(json.dumps(config_data,indent=2))
-        
+        self.window.right_column.append(json.dumps(config_data, indent=2))
+
 
 class StatusBarUpdater:
     def __init__(self, status_label, duration=1000):
@@ -815,6 +837,7 @@ class StatusBarUpdater:
 
     def clear_status_bar(self):
         self.status_label.clear()
+
 
 class ProfileRecorderWindow(QDialog):
     def __init__(self):
@@ -843,7 +866,7 @@ class ProfileRecorderWindow(QDialog):
         self.editor_button_layout.addWidget(self.save_button)
         self.midi_log = self.left_column
 
-        self.status_label = QLabel() 
+        self.status_label = QLabel()
 
         self.splitter.addWidget(self.left_column)
         self.splitter.addWidget(self.right_column)
@@ -901,6 +924,7 @@ class ProfileRecorderWindow(QDialog):
                 )
         else:
             self.update_status_bar("Nothing to save")
+
 
 def main():
     global settings, profile_data, output_port, window, midi_channel_combobox

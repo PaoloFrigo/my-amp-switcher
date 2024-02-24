@@ -17,7 +17,8 @@ OPTIONS = {
         "icon.icns",
         "icon.ico",
         "settings.json",
-    ] + glob.glob("profiles/**/*", recursive=True),
+    ]
+    + glob.glob("profiles/**/*", recursive=True),
     "includes": required_libraries,
     "packages": ["PyQt5", "mido"],
     "plist": {
