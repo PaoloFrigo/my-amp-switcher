@@ -1,4 +1,4 @@
-rm -rf build dist
+#rm -rf build dist
 
 pyinstaller --name 'MyAmpSwitcher' \
             --icon 'icon.icns' \
@@ -6,6 +6,9 @@ pyinstaller --name 'MyAmpSwitcher' \
             --add-data './Info.plist:.' \
             --add-data './settings.json:.' \
             --add-data './icon.icns:.' \
+            --add-data './common/*:common' \
+            --add-data './gui/*:gui' \
+            --add-data './midi/*:midi' \
             --add-data './profiles/*:profiles' \
             --additional-hooks-dir='./' \
             --hidden-import mido.backends.rtmidi \
