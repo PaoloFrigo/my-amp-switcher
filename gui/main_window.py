@@ -54,7 +54,9 @@ class MainWindow(QMainWindow):
 
         logging.info(f"Version {self.version}")
 
-        self.profile_manager = ProfileManager(script_directory, self.version)
+        self.profile_manager = ProfileManager(
+            script_directory, self.version, window=self
+        )
         self.profile_manager.ensure_directories_exist()
         self.settings = self.profile_manager.load_settings()
 
