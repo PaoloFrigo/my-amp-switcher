@@ -324,7 +324,6 @@ class MainWindow(QMainWindow):
             selected_file = file_dialog.selectedFiles()[0]
             new_profile_name = os.path.basename(selected_file)
 
-            # Save the new profile file
             with open(
                 os.path.join(
                     self.profile_manager.script_directory, "profiles", new_profile_name

@@ -18,11 +18,9 @@ class EditProfileWindow(QDialog):
         self.setWindowTitle("Edit Profile")
         self.setGeometry(100, 100, 600, 400)
 
-        # Create a text area to display JSON content
         self.json_text = QTextEdit(self)
         self.json_text.setPlainText(json.dumps(profile_data, indent=4))
 
-        # Save Button
         save_button = QPushButton("Save", self)
         save_button.clicked.connect(self.save_and_close)
 

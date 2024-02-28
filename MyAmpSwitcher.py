@@ -1,6 +1,5 @@
 import logging
 import os
-
 import sys
 from PyQt5.QtWidgets import QApplication
 
@@ -24,21 +23,7 @@ def main():
 
     app = QApplication([])
 
-    # port_name = settings["port_name"]
-    # output_port = None
-
-    # for port in midi_handler.get_output():
-    #     if port_name in port:
-    #         output_port = midi_handler.open_output(port)
-    #         break
-    # if not output_port:
-    #     logging.error(f"Error: MIDI port '{port_name}' not found.")
-
     window = MainWindow(script_directory)
-    # profile_manager.reload_window(window)
-    # profile_manager.reload_profile_data(profile_data)
-    # if len(midi_handler.get_output()) == 0:
-    #     window.update_status_bar("No MIDI output found.")
 
     window.show()
 
