@@ -4,7 +4,7 @@ import logging
 from unittest.mock import MagicMock, patch
 import pytest
 from PyQt5.QtWidgets import QFileDialog
-from common.profile_manager import ProfileManager
+from common.profile_manager import ProfileManager, ProfileNotValid
 
 
 @pytest.fixture
@@ -62,21 +62,24 @@ def test_ensure_directories_exist(tmpdir):
     assert os.path.isdir(profiles_directory)
 
 
-# def test_load_profile_data(tmpdir):
-#     script_directory = str(tmpdir)
-#     version = "1.0"
-#     profile_manager = ProfileManager(script_directory, version)
+def test_load_profile_data(tmpdir):
+    script_directory = str(tmpdir)
+    version = "1.0"
+    profile_manager = ProfileManager(script_directory, version)
 
-#     profile_name = "test_profile.json"
-#     profile_path = os.path.join(script_directory, "profiles", profile_name)
+    profile_name = "test_profile.json"
+    profiles_directory = os.path.join(script_directory, "profiles")
+    profile_path = os.path.join(profiles_directory, profile_name)
 
-#     # Create a test profile file
-#     test_profile_data = {"name": "Test Profile", "channel": 1, "buttons": []}
-#     with open(profile_path, "w") as profile_file:
-#         json.dump(test_profile_data, profile_file)
+    os.makedirs(profiles_directory, exist_ok=True)
 
-#     loaded_profile_data = profile_manager.load_profile_data(profile_name)
-#     assert loaded_profile_data == test_profile_data
+    test_profile_data = {"name": "Test Profile", "channel": 1, "buttons": []}
+    with open(profile_path, "w") as profile_file:
+        json.dump(test_profile_data, profile_file)
+
+    loaded_profile_data = profile_manager.load_profile_data(profile_name)
+
+    assert loaded_profile_data == test_profile_data
 
 
 def test_load_profile_data_nonexistent(tmpdir, caplog):
@@ -95,21 +98,23 @@ def test_load_profile_data_nonexistent(tmpdir, caplog):
         }
 
 
-# def test_load_profile_data_invalid(tmpdir, caplog):
-#     script_directory = str(tmpdir)
-#     version = "1.0"
-#     profile_manager = ProfileManager(script_directory, version)
+def test_load_profile_data_invalid(tmpdir, caplog):
+    script_directory = str(tmpdir)
+    version = "1.0"
+    profile_manager = ProfileManager(script_directory, version)
 
-#     profile_name = "invalid_profile.json"
-#     profile_path = os.path.join(script_directory, "profiles", profile_name)
+    profile_name = "invalid_profile.json"
+    profiles_directory = os.path.join(script_directory, "profiles")
+    profile_path = os.path.join(profiles_directory, profile_name)
 
-#     # Create an invalid JSON file
-#     with open(profile_path, "w") as profile_file:
-#         profile_file.write("invalid_json")
+    os.makedirs(profiles_directory, exist_ok=True)
 
-#     with caplog.at_level(logging.ERROR):
-#         with pytest.raises(ProfileNotValid):
-#             profile_manager.load_profile_data(profile_name)
+    with open(profile_path, "w") as profile_file:
+        profile_file.write("invalid_json")
+
+    with caplog.at_level(logging.ERROR):
+        with pytest.raises(ProfileNotValid):
+            profile_manager.load_profile_data(profile_name)
 
 
 def test_load_settings(tmpdir):
@@ -120,7 +125,6 @@ def test_load_settings(tmpdir):
     settings_filename = "settings.json"
     settings_path = os.path.join(script_directory, settings_filename)
 
-    # Create a test settings file
     test_settings = {
         "port_name": "/dev/ttyUSB0",
         "channel": 1,
@@ -159,7 +163,6 @@ def test_load_settings_invalid(tmpdir, caplog):
     settings_filename = "invalid_settings.json"
     settings_path = os.path.join(script_directory, settings_filename)
 
-    # Create an invalid JSON file
     with open(settings_path, "w") as settings_file:
         settings_file.write("invalid_json")
 
@@ -174,49 +177,23 @@ def test_load_settings_invalid(tmpdir, caplog):
         }
 
 
-# def test_save_settings(tmpdir):
-#     script_directory = str(tmpdir)
-#     version = "1.0"
-#     profile_manager = ProfileManager(script_directory, version)
+def test_change_profile_dialog_accepted(mock_qfiledialog, tmpdir):
+    script_directory = str(tmpdir)
+    version = "1.0"
+    profile_manager = ProfileManager(script_directory, version)
+    profile_manager.window = MagicMock()
 
-#     # Create a temporary settings file
-#     settings_filename = "settings.json"
-#     settings_path = os.path.join(script_directory, settings_filename)
-#     test_settings = {"port_name": "/dev/ttyUSB0", "channel": 1, "profile": "custom.json", "icon": "custom_icon.icns"}
-#     with open(settings_path, "w") as settings_file:
-#         json.dump(test_settings, settings_file)
+    initial_profile_data = {}
 
-#     # Save new settings
-#     new_profile_name = "new_profile.json"
-#     new_channel = 2
-#     new_profile_data = {"name": "New Profile", "channel": new_channel, "buttons": []}
+    with patch.object(
+        profile_manager, "load_profile_data", return_value=initial_profile_data
+    ):
+        selected_file = os.path.join(script_directory, "profiles", "test_profile.json")
+        profile_data = profile_manager.change_profile(selected_file)
 
-#     with patch("builtins.open", create=True) as mock_open:
-#         profile_manager.save_settings(new_profile_name, new_channel, new_profile_data)
-
-#     assert profile_manager.settings["profile"] == new_profile_name
-#     assert profile_manager.settings["channel"] == new_channel
-
-#     # Ensure that the new settings are saved to the file
-#     mock_open.assert_called_once_with(
-#         os.path.join(script_directory, "settings.json"), "w"
-#     )
-#     written_data = json.dumps(test_settings, indent=4)
-#     mock_open().write.assert_called_once_with(written_data)
-
-# def test_change_profile_dialog_accepted(mock_qfiledialog, tmpdir):
-#     script_directory = str(tmpdir)
-#     version = "1.0"
-#     profile_manager = ProfileManager(script_directory, version)
-#     profile_manager.window = MagicMock()
-
-#     selected_file = os.path.join(script_directory, "profiles", "test_profile.json")
-#     with patch.object(profile_manager, "load_profile_data", return_value={}):
-#         profile_data = profile_manager.change_profile(selected_file)
-
-#     assert profile_data == {}
-#     assert profile_manager.settings["profile"] == "test_profile.json"
-#     assert profile_manager.profile_data == {}
+    assert profile_data == initial_profile_data
+    assert profile_manager.settings["profile"] == "test_profile.json"
+    assert profile_manager.profile_data == initial_profile_data
 
 
 def test_change_profile_dialog_canceled(mock_qfiledialog, tmpdir):

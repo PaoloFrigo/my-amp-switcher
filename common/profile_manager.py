@@ -63,7 +63,7 @@ class ProfileManager:
 
     def save_settings(self, profile_name=None, channel=0, profile_data=None):
         try:
-            if profile_name is not None or profile_name is not False:
+            if profile_name:
                 self.settings["profile"] = profile_name
                 with open(
                     os.path.join(self.script_directory, "settings.json"), "w"
@@ -73,7 +73,7 @@ class ProfileManager:
 
             if profile_data:
                 new_profile_data = profile_data.copy()
-                new_profile_data["channel"] = channel
+                new_profile_data["channel"] = new_profile_data.get("channel", channel)
 
         except Exception as e:
             logging.error(f"Error saving settings: {e}")
@@ -102,9 +102,9 @@ class ProfileManager:
         self.settings["profile"] = new_profile_name
         self.profile_data = new_profile_data
 
-        self.save_settings(
-            os.path.basename(selected_file), self.profile_data["channel"]
-        )
+        channel = new_profile_data.get("channel", 0)
+
+        self.save_settings(os.path.basename(selected_file), channel)
 
         self.window.update_content(self.profile_data, self.settings)
         self.window.update_status_bar("Profile loaded")
