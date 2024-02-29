@@ -1,3 +1,5 @@
+[![Build](https://github.com/PaoloFrigo/my-amp-switcher/actions/workflows/build.yml/badge.svg)](https://github.com/PaoloFrigo/my-amp-switcher/actions/workflows/build.yml) 
+
 # MY AMP SWITCHER
 
 MyAmpSwitcher is a Python application that allows you to control your amplifier, amp-cab-switcher or any device through MIDI messages. You can switch between different profiles, each containing customizable buttons that send MIDI Program Change and Control Change messages.
