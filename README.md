@@ -1,4 +1,4 @@
-[![Build](https://github.com/PaoloFrigo/my-amp-switcher/actions/workflows/build.yml/badge.svg)](https://github.com/PaoloFrigo/my-amp-switcher/actions/workflows/build.yml) 
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT) [![CI](https://github.com/PaoloFrigo/my-amp-switcher/actions/workflows/build.yml/badge.svg)](https://github.com/PaoloFrigo/my-amp-switcher/actions/workflows/build.yml) 
 
 # MY AMP SWITCHER
 
