@@ -1,4 +1,4 @@
-[![Build](https://github.com/PaoloFrigo/my-amp-switcher/actions/workflows/build.yml/badge.svg)](https://github.com/PaoloFrigo/my-amp-switcher/actions/workflows/build.yml) 
+[![Build](https://github.com/PaoloFrigo/my-amp-switcher/actions/workflows/build.yml/badge.svg)](https://github.com/PaoloFrigo/my-amp-switcher/actions/workflows/build.yml)
 
 # MY AMP SWITCHER
 
@@ -138,6 +138,8 @@ To run the MyAmpSwitcher application, follow these steps:
     ```
 
 ## User Interface Notes
+
+### Main Window
 The application has 2 main configuration files. "Settings" (settings.json) for visualization preferences/defaults and profiles (individually saved under the profiles folder) specific to the functions they are designed to perform.
 
 This is the layout of the app:
@@ -155,6 +157,21 @@ The "Save" button will write any change applied to the dropdown in the toolbar t
 
 8. All Button labels and MIDI messages are defined in the profile, instead text size and the number of buttons for each row are defined in the settings.
 9. The status bar displays MIDI Messages and user notifications.
+
+### Profile Recorder Window
+
+Under the profile menu, the Profile Recorder feature allows users to "virtualize" any physical or virtual controller into a profile for MyAmpSwitcher.
+This can be handy even for troubleshooting MIDI Controllers or understanding issues when multiple messages are sent simultaneously.
+
+![ProfileRecorder](./media/profile-recorder.png)
+
+1. The "Start" button activates the capturing process of MIDI input messages.
+2. The left pane will display the captured messages after the start button is pressed.
+3. The "Stop and Generate" button will stop the capturing process and generate the profile on the right pane.
+4. The right pane will display the automatically generated profile after the stop and generated button is selected.
+5. The "Save As Profile" will save the generated profile and prompt users with a file dialog to name and save the file.
+6. The "Clear" button will clean the left and right panes.
+7. The bottom label will display status messages acting like a status bar.
 
 ## Usage
 * Please make sure you connect your MIDI interface before opening My-Amp-Swticher.
