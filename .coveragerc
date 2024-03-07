@@ -1,0 +1,17 @@
+[run]
+source = myampswitcher
+         */common/*
+         */gui/*
+         */midi/*
+[report]
+omit =
+    */tests/*
+    */__init__.py
+    */venv/*
+    */.venv/*
+    */.env/*
+    */media/*
+    */profiles/*
+
+[xml]
+output = coverage.xml
