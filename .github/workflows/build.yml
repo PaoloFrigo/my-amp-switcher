@@ -35,7 +35,10 @@ jobs:
 
     - name: Run tests and collect coverage report
       run: |
-        python -m pytest -v  --cov=my-amp-switcher --cov-report=xml
+        python -m pytest -v --cov=my-amp-switcher --cov-report=xml
 
-    - name: Upload coverage reports to Codecov with GitHub Action
-      uses: codecov/codecov-action@v3
+    - name: Upload coverage reports to Codecov
+      uses: codecov/codecov-action@v4.0.1
+      with:
+        token: ${{ secrets.CODECOV_TOKEN }}
+        slug: PaoloFrigo/my-amp-switcher
