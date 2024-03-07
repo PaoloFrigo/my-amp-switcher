@@ -1,5 +1,5 @@
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT) [![CI](https://github.com/PaoloFrigo/my-amp-switcher/actions/workflows/build.yml/badge.svg)](https://github.com/PaoloFrigo/my-amp-switcher/actions/workflows/build.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT) [![CI](https://github.com/PaoloFrigo/my-amp-switcher/actions/workflows/build.yml/badge.svg)](https://github.com/PaoloFrigo/my-amp-switcher/actions/workflows/build.yml) [![codecov](https://codecov.io/gh/PaoloFrigo/my-amp-switcher/graph/badge.svg?token=xZz4gEWeLo)](https://codecov.io/gh/PaoloFrigo/my-amp-switcher)
 
 
 # MY AMP SWITCHER
