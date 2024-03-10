@@ -1,0 +1,50 @@
+{
+    "name": "Marshall DSL100HR",
+    "channel": 1,
+    "buttons": [
+        {
+            "order": 0,
+            "program_change": 0,
+            "name": "Clean"
+        },
+        {
+            "order": 1,
+            "program_change": 1,
+            "name": "Crunch"
+        },
+        {
+            "order": 2,
+            "program_change": 2,
+            "name": "Ultra Gain 1"
+        },
+        {
+            "order": 3,
+            "program_change": 3,
+            "name": "Ultra Gain 2"
+        },
+        {
+            "order": 4,
+            "cc_number": 13,
+            "cc_value": 1,
+            "name": "FX loop On"
+        },
+        {
+            "order": 5,
+            "cc_number": 13,
+            "cc_value": 0,
+            "name": "FX loop Off"
+        },
+        {
+            "order": 6,
+            "cc_number": 14,
+            "cc_value": 0,
+            "name": "Master 1"
+        },
+        {
+            "order": 7,
+            "cc_number": 14,
+            "cc_value": 1,
+            "name": "Master 2"
+        }
+    ]
+}
