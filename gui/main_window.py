@@ -304,7 +304,7 @@ class MainWindow(QMainWindow):
             "name": "Template",
             "channel": 0,
             "buttons": [
-                {"order": 0, "color": "green", "program_change": 1, "name": "clean"}
+                {"order": 0, "color": "green", "program_change": 1, "name": "button 1"}
             ],
         }
 
@@ -343,15 +343,11 @@ class MainWindow(QMainWindow):
                 channel=int(self.midi_channel_combobox.currentText())
             )
 
-            self.setWindowTitle(new_profile_name)
-            self.close()
-            self.__init__(self.profile_data, self.profile_manager.load_settings())
+            self.update_content(self.profile_data, self.settings)
 
             self.update_status_bar(
                 f"New profile {new_profile_name} created successfully"
             )
-
-            self.show()
 
     def edit_profile(self):
         edit_profile_window = EditProfileWindow(
