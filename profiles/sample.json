@@ -1,6 +1,6 @@
 {
     "name": "Sample",
-    "channel": 0,
+    "channel": 1,
     "buttons": [
         {
             "order": 1,

@@ -134,7 +134,7 @@ class MainWindow(QMainWindow):
 
         self.midi_channel_label = QLabel("Channel:")
         self.midi_channel_combobox = QComboBox()
-        self.midi_channel_combobox.addItems(map(str, range(17)))
+        self.midi_channel_combobox.addItems(map(str, range(1, 17)))
         self.midi_channel_combobox.setCurrentText(
             str(self.profile_data.get("channel", 0))
         )
@@ -302,7 +302,7 @@ class MainWindow(QMainWindow):
     def new_profile(self):
         template_json = {
             "name": "Template",
-            "channel": 0,
+            "channel": 1,
             "buttons": [
                 {"order": 0, "color": "green", "program_change": 1, "name": "button 1"}
             ],
