@@ -44,6 +44,7 @@ class MainWindow(QMainWindow):
 
         self.script_directory = script_directory
         plist_path = os.path.join(script_directory, "Info.plist")
+        self.setting_file_path = os.path.join(self.script_directory, "settings.json")
 
         # Load version from Info.plist
         with open(plist_path, "rb") as plist_file:
@@ -89,7 +90,8 @@ class MainWindow(QMainWindow):
 
     def setup_ui(self):
         self.setWindowTitle(self.profile_data["name"])
-        self.setGeometry(100, 100, 600, 400)
+        # self.setGeometry(100, 100, 600, 400)
+        self.load_window_position()
 
         self.setup_menu_bar()
         self.setup_midi_layout()
@@ -97,6 +99,10 @@ class MainWindow(QMainWindow):
 
         self.set_status_bar()
         self.set_window_icon()
+
+    def closeEvent(self, event):
+        self.save_window_position()
+        super().closeEvent(event)
 
     def setup_menu_bar(self):
         menubar = self.menuBar()
@@ -190,6 +196,30 @@ class MainWindow(QMainWindow):
             )
         )
         return button
+
+    def save_window_position(self):
+        new_position = {
+            "x": self.x(),
+            "y": self.y(),
+            "width": self.width(),
+            "height": self.height(),
+        }
+
+        with open(self.setting_file_path, "r") as file:
+            settings = json.load(file)
+        settings.update(new_position)
+        with open(self.setting_file_path, "w") as file:
+            json.dump(settings, file, indent=4)
+
+    def load_window_position(self):
+        try:
+            with open(self.setting_file_path, "r") as file:
+                position = json.load(file)
+                self.setGeometry(
+                    position["x"], position["y"], position["width"], position["height"]
+                )
+        except FileNotFoundError:
+            self.setGeometry(100, 100, 600, 400)
 
     def save_channel(self):
         try:
