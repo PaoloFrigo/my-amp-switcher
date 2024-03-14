@@ -4,5 +4,9 @@
     "icon": "icon.ico",
     "font": "Arial",
     "size": 14,
-    "buttons_per_row": 3
+    "buttons_per_row": 3,
+    "x": 100,
+    "y": 72,
+    "width": 600,
+    "height": 400
 }
