@@ -61,8 +61,12 @@ class ProfileManager:
             logging.error(f"Error loading settings: {e}")
             return default_settings
 
-    def save_settings(self, profile_name=None, channel=0, profile_data=None):
+    def save_settings(
+        self, profile_name=None, channel=0, profile_data=None, port_name=None
+    ):
         try:
+            if port_name:
+                self.settings["port_name"] = port_name
             if profile_name:
                 self.settings["profile"] = profile_name
                 with open(
