@@ -71,7 +71,9 @@ class MainWindow(QMainWindow):
             )
             self.profile_data = self.profile_manager.load_profile_data("sample.json")
             self.profile_manager.save_settings(
-                "sample.json", self.profile_data["channel"]
+                "sample.json",
+                self.profile_data["channel"],
+                port_name=self.midi_output_combobox.currentText(),
             )
 
         port_name = self.settings["port_name"]
@@ -87,6 +89,7 @@ class MainWindow(QMainWindow):
 
         self.midi_handler.set_midi_channel(self.profile_data["channel"])
         self.setup_ui()
+        self.save_midi_output_on_opening()
 
     def setup_ui(self):
         self.setWindowTitle(self.profile_data["name"])
@@ -133,7 +136,7 @@ class MainWindow(QMainWindow):
         self.midi_output_label = QLabel("MIDI Output:")
         self.midi_output_combobox = QComboBox()
         self.reload_midi_output()
-        self.midi_output_combobox.currentIndexChanged.connect(self.select_midi_output)
+        self.midi_output_combobox.activated.connect(self.select_midi_output)
 
         self.refresh_midi_button = QPushButton("Refresh")
         self.refresh_midi_button.clicked.connect(self.reload_midi_output)
@@ -223,9 +226,12 @@ class MainWindow(QMainWindow):
 
     def save_channel(self):
         try:
+            new_settings = self.settings.copy()
+            new_settings["port_name"] = self.midi_output_combobox.currentText()
+            with open(self.setting_file_path, "w") as settings_file:
+                json.dump(new_settings, settings_file, indent=4)
             new_profile_data = self.profile_data.copy()
             new_profile_data["channel"] = int(self.midi_channel_combobox.currentText())
-
             with open(
                 os.path.join(
                     self.profile_manager.script_directory,
@@ -370,7 +376,8 @@ class MainWindow(QMainWindow):
             self.profile_data = new_profile_data
 
             self.profile_manager.save_settings(
-                channel=int(self.midi_channel_combobox.currentText())
+                channel=int(self.midi_channel_combobox.currentText()),
+                port_name=self.midi_output_combobox.currentText(),
             )
 
             self.update_content(self.profile_data, self.settings)
@@ -475,8 +482,14 @@ class MainWindow(QMainWindow):
                 self.midi_output_combobox.addItem(output)
 
         if self.settings["port_name"] != "":
-            self.midi_output_combobox.setCurrentText(self.settings["port_name"])
-
+            if self.settings["port_name"] in [
+                self.midi_output_combobox.itemText(i)
+                for i in range(self.midi_output_combobox.count())
+            ]:
+                self.midi_output_combobox.setCurrentText(self.settings["port_name"])
+            else:
+                self.midi_output_combobox.setCurrentIndex(0)
+            self.settings["port_name"] = self.midi_output_combobox.currentText()
         return midi_outputs
 
     def show_about_dialog(self):
@@ -514,11 +527,30 @@ class MainWindow(QMainWindow):
 
     def select_midi_output(self, index):
         selected_port = self.midi_output_combobox.itemText(index)
-        self.settings["port_name"] = selected_port
-
+        if selected_port != "":
+            self.settings["port_name"] = selected_port
         try:
             self.midi_handler.set_midi_output(selected_port)
         except Exception as e:
             logging.error(f"Error opening MIDI port: {e}")
             self.update_status_bar("MIDI Output selected cannot be empty")
             self.midi_handler.midi_output = None
+
+    def save_midi_output_on_opening(self):
+        if (
+            self.settings["port_name"]
+            in [
+                self.midi_output_combobox.itemText(i)
+                for i in range(self.midi_output_combobox.count())
+            ]
+            and self.settings["port_name"] != ""
+        ):
+            self.midi_output_combobox.setCurrentText(self.settings["port_name"])
+        else:
+            self.midi_output_combobox.setCurrentIndex(0)
+        port_name = self.midi_output_combobox.currentText()
+        if port_name and port_name != "":
+            self.settings["port_name"] = port_name
+            self.midi_handler.set_midi_output(self.settings["port_name"])
+            with open(self.setting_file_path, "w") as settings:
+                json.dump(self.settings, settings, indent=4)
