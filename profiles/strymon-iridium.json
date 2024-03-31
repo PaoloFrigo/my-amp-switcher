@@ -1,0 +1,108 @@
+{
+    "name": "Strymon Iridium",
+    "channel": 1,
+    "buttons": [
+        {
+            "order": 0,
+            "cc_number": 102,
+            "cc_value": 0,
+            "name": "Bypass"
+        },
+        {
+            "order": 1,
+            "cc_number": 102,
+            "cc_value": 1,
+            "name": "On"
+        },
+        {
+            "order": 2,
+            "cc_number": 19,
+            "cc_value": 1,
+            "name": "Amp Round"
+        },
+        {
+            "order": 3,
+            "cc_number": 19,
+            "cc_value": 2,
+            "name": "Amp Chime"
+        },
+        {
+            "order": 4,
+            "cc_number": 19,
+            "cc_value": 3,
+            "name": "Amp Punch"
+        },
+        {
+            "order": 5,
+            "cc_number": 20,
+            "cc_value": 0,
+            "name": "Cab Round A"
+        },
+        {
+            "order": 6,
+            "cc_number": 20,
+            "cc_value": 1,
+            "name": "Cab Round B"
+        },
+        {
+            "order": 7,
+            "cc_number": 20,
+            "cc_value": 2,
+            "name": "Cab Round C"
+        },
+        {
+            "order": 8,
+            "cc_number": 20,
+            "cc_value": 3,
+            "name": "Cab Chime A"
+        },
+        {
+            "order": 9,
+            "cc_number": 20,
+            "cc_value": 4,
+            "name": "Cab Chime B"
+        },
+        {
+            "order": 10,
+            "cc_number": 20,
+            "cc_value": 5,
+            "name": "Cab Chime C"
+        },
+        {
+            "order": 11,
+            "cc_number": 20,
+            "cc_value": 6,
+            "name": "Cab Punch A"
+        },
+        {
+            "order": 12,
+            "cc_number": 20,
+            "cc_value": 7,
+            "name": "Cab Punch B"
+        },
+        {
+            "order": 13,
+            "cc_number": 20,
+            "cc_value": 8,
+            "name": "Cab Punch C"
+        },
+        {
+            "order": 14,
+            "cc_number": 18,
+            "cc_value": 1,
+            "name": "Room Small"
+        },
+        {
+            "order": 15,
+            "cc_number": 18,
+            "cc_value": 2,
+            "name": "Room Medium"
+        },
+        {
+            "order": 16,
+            "cc_number": 18,
+            "cc_value": 3,
+            "name": "Room Large"
+        }
+    ]
+}
