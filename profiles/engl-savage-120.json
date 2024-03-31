@@ -1,0 +1,174 @@
+{
+    "name": "Engl Savage 120 II",
+    "channel": 1,
+    "buttons": [
+        {
+            "order": 0,
+            "cc_number": 14,
+            "cc_value": 0,
+            "name": "Master A"
+        },
+        {
+            "order": 1,
+            "cc_number": 14,
+            "cc_value": 5,
+            "name": "Master B"
+        },
+        {
+            "order": 2,
+            "cc_number": 15,
+            "cc_value": 1,
+            "name": "Rough"
+        },
+        {
+            "order": 3,
+            "cc_number": 15,
+            "cc_value": 5,
+            "name": "Smooth"
+        },
+        {
+            "order": 4,
+            "cc_number": 20,
+            "cc_value": 1,
+            "name": "Input Lo"
+        },
+        {
+            "order": 5,
+            "cc_number": 20,
+            "cc_value": 5,
+            "name": "Input Hi"
+        },
+        {
+            "order": 6,
+            "cc_number": 21,
+            "cc_value": 1,
+            "name": "Preshape Off"
+        },
+        {
+            "order": 7,
+            "cc_number": 21,
+            "cc_value": 5,
+            "name": "Preshape On"
+        },
+        {
+            "order": 8,
+            "cc_number": 22,
+            "cc_value": 1,
+            "name": "Gain Lo"
+        },
+        {
+            "order": 9,
+            "cc_number": 22,
+            "cc_value": 5,
+            "name": "Gain Hi"
+        },
+        {
+            "order": 10,
+            "cc_number": 23,
+            "cc_value": 1,
+            "name": "Bright Off"
+        },
+        {
+            "order": 11,
+            "cc_number": 23,
+            "cc_value": 5,
+            "name": "Bright On"
+        },
+        {
+            "order": 12,
+            "cc_number": 24,
+            "cc_value": 1,
+            "name": "Noise Gate Off"
+        },
+        {
+            "order": 13,
+            "cc_number": 24,
+            "cc_value": 1,
+            "name": "Noise Gate On"
+        },
+        {
+            "order": 14,
+            "cc_number": 25,
+            "cc_value": 1,
+            "name": "Presence A"
+        },
+        {
+            "order": 15,
+            "cc_number": 25,
+            "cc_value": 5,
+            "name": "Presence B"
+        },
+        {
+            "order": 16,
+            "cc_number": 26,
+            "cc_value": 0,
+            "name": "Deep Boost Off"
+        },
+        {
+            "order": 17,
+            "cc_number": 26,
+            "cc_value": 5,
+            "name": "Deep Boost On"
+        },
+        {
+            "order": 18,
+            "cc_number": 27,
+            "cc_value": 0,
+            "name": "Contour Off (Clean/Crunch)"
+        },
+        {
+            "order": 19,
+            "cc_number": 27,
+            "cc_value": 1,
+            "name": "Contour On (Clean/Crunch)"
+        },
+        {
+            "order": 20,
+            "cc_number": 28,
+            "cc_value": 1,
+            "name": "Mid Lean"
+        },
+        {
+            "order": 21,
+            "cc_number": 28,
+            "cc_value": 1,
+            "name": "Mid Bold"
+        },
+        {
+            "order": 22,
+            "cc_number": 29,
+            "cc_value": 1,
+            "name": "Contour Off (Crunch II/Lead)"
+        },
+        {
+            "order": 23,
+            "cc_number": 29,
+            "cc_value": 5,
+            "name": "Contour On (Crunch II/Lead)"
+        },
+        {
+            "order": 24,
+            "cc_number": 30,
+            "cc_value": 1,
+            "name": "Fx Loop I"
+        },
+        {
+            "order": 25,
+            "cc_number": 30,
+            "cc_value": 5,
+            "name": "Fx Loop II"
+        },
+        {
+            "order": 26,
+            "cc_number": 7,
+            "cc_value": 1,
+            "name": "Amp Mute Off"
+        },
+        {
+            "order": 27,
+            "cc_number": 7,
+            "cc_value": 5,
+            "name": "Amp Mute On"
+        }
+    ]
+}
