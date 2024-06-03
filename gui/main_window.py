@@ -25,7 +25,7 @@ from PyQt5.QtCore import Qt
 from gui.edit_settings_window import EditSettingsWindow
 from gui.edit_profile_window import EditProfileWindow
 from gui.profile_recorder_window import ProfileRecorderWindow
-from common.profile_manager import ProfileManager, ProfileNotValid
+from common.profile_manager import ProfileManager, ProfileNotValid, is_json_file
 from midi.midi_handler import MidiHandler
 
 
@@ -415,19 +415,30 @@ class MainWindow(QMainWindow):
         if file_dialog.exec_():
             selected_file = file_dialog.selectedFiles()[0]
             new_profile_name = os.path.basename(selected_file)
+            if is_json_file(selected_file) is False:
+                QMessageBox.warning(
+                    None,
+                    "Invalid JSON profile",
+                    f"Error importing the file: {new_profile_name}. \nPlease make sure the file content is a valid JSON file.",
+                )
+                self.update_status_bar(
+                    f"{new_profile_name} is not a valid JSON Format."
+                )
+            else:
+                # Copy the selected file to the profiles directory
+                destination_path = os.path.join(
+                    self.profile_manager.script_directory, "profiles", new_profile_name
+                )
+                shutil.copy(selected_file, destination_path)
 
-            # Copy the selected file to the profiles directory
-            destination_path = os.path.join(
-                self.profile_manager.script_directory, "profiles", new_profile_name
-            )
-            shutil.copy(selected_file, destination_path)
+                # Load the new profile data
+                self.profile_data = self.profile_manager.load_profile_data(
+                    new_profile_name
+                )
 
-            # Load the new profile data
-            self.profile_data = self.profile_manager.load_profile_data(new_profile_name)
-
-            # Update the settings and profile_data
-            settings["profile"] = new_profile_name
-            self.profile_manager.change_profile()
+                # Update the settings and profile_data
+                settings["profile"] = new_profile_name
+                self.profile_manager.change_profile()
 
     def record_profile(self):
         record_window = ProfileRecorderWindow()

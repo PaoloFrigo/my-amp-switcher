@@ -4,7 +4,7 @@ import logging
 from unittest.mock import MagicMock, patch
 import pytest
 from PyQt5.QtWidgets import QFileDialog
-from common.profile_manager import ProfileManager, ProfileNotValid
+from common.profile_manager import ProfileManager
 
 
 @pytest.fixture
@@ -112,9 +112,27 @@ def test_load_profile_data_invalid(tmpdir, caplog):
     with open(profile_path, "w") as profile_file:
         profile_file.write("invalid_json")
 
-    with caplog.at_level(logging.ERROR):
-        with pytest.raises(ProfileNotValid):
-            profile_manager.load_profile_data(profile_name)
+    with patch("PyQt5.QtWidgets.QMessageBox.warning") as mock_warning:
+        with caplog.at_level(logging.ERROR):
+            result = profile_manager.load_profile_data(profile_name)
+
+            # Check if an error message was logged
+            assert any(
+                "Invalid JSON profile" in message for message in caplog.messages
+            ), "Expected error message not found in logs"
+
+            # Check if the QMessageBox.warning was called
+            mock_warning.assert_called_once_with(
+                None,
+                "Invalid JSON profile",
+                f"Error loading the file: {profile_path}. \nPlease make sure the file content is a valid JSON file.",
+            )
+
+            # Check if the method returns the default profile structure
+            expected_result = {"name": "New Profile", "channel": 0, "buttons": []}
+            assert (
+                result == expected_result
+            ), "Expected default profile structure to be returned on invalid JSON"
 
 
 def test_load_settings(tmpdir):
