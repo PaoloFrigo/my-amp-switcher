@@ -4,6 +4,16 @@ import json
 from PyQt5.QtWidgets import QMessageBox, QFileDialog
 
 
+def is_json_file(filename):
+    try:
+        with open(filename, "r") as f:
+            json.load(f)
+        return True
+    except ValueError as e:
+        logging.error("invalid json: %s" % e)
+        return False
+
+
 class ProfileNotValid(Exception):
     pass
 
@@ -33,7 +43,14 @@ class ProfileManager:
                 f"Profile file not found: {profile_name}. Creating a new one."
             )
             return {"name": "New Profile", "channel": 0, "buttons": []}
-
+        if not is_json_file(json_file_path):
+            logging.error(f"Invalid JSON profile: {profile_name}. Creating a new one.")
+            QMessageBox.warning(
+                None,
+                "Invalid JSON profile",
+                f"Error loading the file: {json_file_path}. \nPlease make sure the file content is a valid JSON file.",
+            )
+            return {"name": "New Profile", "channel": 0, "buttons": []}
         try:
             with open(json_file_path) as json_file:
                 return json.load(json_file)
